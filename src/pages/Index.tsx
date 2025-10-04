@@ -5,6 +5,7 @@ import { PageEditor } from '@/components/PageEditor';
 import { exportToMarkdown, downloadMarkdown, parseMarkdownImport } from '@/utils/markdown';
 import { useToast } from '@/hooks/use-toast';
 import { FileText } from 'lucide-react';
+import Dashboard from '@/pages/Dashboard';
 
 const Index = () => {
   const [pages, setPages] = useState<Page[]>([]);
@@ -193,6 +194,7 @@ const Index = () => {
         onImport={handleImport}
         isDark={isDark}
         onToggleTheme={handleToggleTheme}
+        
       />
 
       {currentPage ? (
@@ -201,6 +203,7 @@ const Index = () => {
           page={currentPage}
           onUpdate={handleUpdatePage}
         />
+        
       ) : (
         <div className="flex-1 flex items-center justify-center text-muted-foreground">
           <div className="text-center">

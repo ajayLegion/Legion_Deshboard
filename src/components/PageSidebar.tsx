@@ -167,7 +167,7 @@ export const PageSidebar = ({
       {/* Main Navigation */}
       <div className="px-2 pb-2 space-y-0.5">
         <Button
-          variant="ghost"
+          variant="ghost" 
           className="w-full justify-start h-8 px-2 text-sidebar-foreground hover:bg-sidebar-accent text-sm"
         >
           <Home className="h-4 w-4 mr-2" />

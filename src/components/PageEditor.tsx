@@ -1,6 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import { Page } from '@/services/storage';
-import { Bold, Italic, List, ListOrdered, Heading1, Heading2, Heading3, CheckSquare } from 'lucide-react';
+import { 
+  Bold, 
+  Italic, 
+  List, 
+  ListOrdered, 
+  Heading1, 
+  Heading2, 
+  Heading3, 
+  CheckSquare,
+  Smile,
+  Image,
+  MessageSquare
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -49,90 +61,122 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   };
 
   return (
-    <div className="flex-1 overflow-auto">
-      <div className="max-w-4xl mx-auto px-8 py-12">
+    <div className="flex-1 overflow-auto bg-background">
+      <div className="max-w-[900px] mx-auto px-24 py-16">
+        {/* Action buttons above title */}
+        <div className="flex items-center gap-3 mb-4 text-muted-foreground">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-auto py-1 px-2 text-sm hover:bg-accent"
+          >
+            <Smile className="h-4 w-4 mr-1.5" />
+            Add icon
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-auto py-1 px-2 text-sm hover:bg-accent"
+          >
+            <Image className="h-4 w-4 mr-1.5" />
+            Add cover
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-auto py-1 px-2 text-sm hover:bg-accent"
+          >
+            <MessageSquare className="h-4 w-4 mr-1.5" />
+            Add comment
+          </Button>
+        </div>
+
+        {/* Page Title */}
         <Input
           ref={titleInputRef}
           value={title}
           onChange={(e) => handleTitleChange(e.target.value)}
           placeholder="Untitled"
-          className="text-4xl font-bold border-none bg-transparent px-0 focus-visible:ring-0 focus-visible:ring-offset-0 mb-4"
+          className="text-[40px] font-bold border-none bg-transparent px-0 focus-visible:ring-0 focus-visible:ring-offset-0 mb-2 h-auto py-1"
         />
 
-        <div className="flex items-center gap-1 mb-4 pb-4 border-b">
+        {/* Content Editor */}
+        <div
+          ref={editorRef}
+          contentEditable
+          onInput={handleContentChange}
+          className="editor-content min-h-[500px] outline-none text-base leading-relaxed"
+          data-placeholder="Write, press 'space' for AI, '/' for commands..."
+          suppressContentEditableWarning
+        />
+
+        {/* Formatting Toolbar - Hidden by default, could be shown on selection */}
+        <div className="hidden items-center gap-1 p-1 bg-card rounded-lg shadow-lg border">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => applyFormat('bold')}
-            title="Bold"
+            className="h-7 w-7 p-0"
           >
-            <Bold className="h-4 w-4" />
+            <Bold className="h-3.5 w-3.5" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => applyFormat('italic')}
-            title="Italic"
+            className="h-7 w-7 p-0"
           >
-            <Italic className="h-4 w-4" />
+            <Italic className="h-3.5 w-3.5" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => applyFormat('formatBlock', '<h1>')}
-            title="Heading 1"
+            className="h-7 w-7 p-0"
           >
-            <Heading1 className="h-4 w-4" />
+            <Heading1 className="h-3.5 w-3.5" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => applyFormat('formatBlock', '<h2>')}
-            title="Heading 2"
+            className="h-7 w-7 p-0"
           >
-            <Heading2 className="h-4 w-4" />
+            <Heading2 className="h-3.5 w-3.5" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => applyFormat('formatBlock', '<h3>')}
-            title="Heading 3"
+            className="h-7 w-7 p-0"
           >
-            <Heading3 className="h-4 w-4" />
+            <Heading3 className="h-3.5 w-3.5" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => applyFormat('insertUnorderedList')}
-            title="Bullet List"
+            className="h-7 w-7 p-0"
           >
-            <List className="h-4 w-4" />
+            <List className="h-3.5 w-3.5" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => applyFormat('insertOrderedList')}
-            title="Numbered List"
+            className="h-7 w-7 p-0"
           >
-            <ListOrdered className="h-4 w-4" />
+            <ListOrdered className="h-3.5 w-3.5" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={insertCheckbox}
-            title="Checkbox"
+            className="h-7 w-7 p-0"
           >
-            <CheckSquare className="h-4 w-4" />
+            <CheckSquare className="h-3.5 w-3.5" />
           </Button>
         </div>
-
-        <div
-          ref={editorRef}
-          contentEditable
-          onInput={handleContentChange}
-          className="editor-content min-h-[500px] outline-none"
-          suppressContentEditableWarning
-        />
       </div>
     </div>
   );

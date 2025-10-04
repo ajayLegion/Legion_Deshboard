@@ -53,45 +53,45 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 0 0% 10%;
-    --foreground: 0 0% 95%;
+    --background: 0 0% 11%;
+    --foreground: 0 0% 85%;
 
-    --card: 0 0% 12%;
-    --card-foreground: 0 0% 95%;
+    --card: 0 0% 13%;
+    --card-foreground: 0 0% 85%;
 
-    --popover: 0 0% 12%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 0 0% 13%;
+    --popover-foreground: 0 0% 85%;
 
     --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 95%;
+    --secondary: 0 0% 17%;
+    --secondary-foreground: 0 0% 85%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 0 0% 17%;
+    --muted-foreground: 0 0% 55%;
 
-    --accent: 221 83% 53%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 0 0% 17%;
+    --accent-foreground: 0 0% 85%;
 
     --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
+    --border: 0 0% 22%;
+    --input: 0 0% 17%;
     --ring: 221 83% 53%;
 
-    --sidebar-background: 0 0% 12%;
-    --sidebar-foreground: 0 0% 80%;
+    --sidebar-background: 0 0% 13%;
+    --sidebar-foreground: 0 0% 75%;
     --sidebar-primary: 221 83% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 16%;
-    --sidebar-accent-foreground: 0 0% 90%;
-    --sidebar-border: 0 0% 18%;
+    --sidebar-accent: 0 0% 17%;
+    --sidebar-accent-foreground: 0 0% 85%;
+    --sidebar-border: 0 0% 20%;
     --sidebar-ring: 221 83% 53%;
 
-    --editor-background: 0 0% 12%;
-    --hover-bg: 0 0% 16%;
+    --editor-background: 0 0% 11%;
+    --hover-bg: 0 0% 17%;
   }
 }
 
@@ -113,6 +113,11 @@ All colors MUST be HSL.
 @layer components {
   .editor-content {
     @apply text-foreground leading-relaxed;
+  }
+
+  .editor-content:empty:before {
+    content: attr(data-placeholder);
+    @apply text-muted-foreground pointer-events-none;
   }
   
   .editor-content h1 {

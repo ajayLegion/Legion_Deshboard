@@ -38,10 +38,13 @@ const Index = () => {
 
     initStorage();
 
-    const isDarkMode = localStorage.getItem('theme') === 'dark';
+    // Default to dark mode to match the reference image
+    const savedTheme = localStorage.getItem('theme');
+    const isDarkMode = savedTheme === 'dark' || savedTheme === null;
     setIsDark(isDarkMode);
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
     }
   }, []);
 

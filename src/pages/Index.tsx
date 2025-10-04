@@ -126,13 +126,29 @@ const Index = () => {
       const content = await file.text();
       const importedPages = parseMarkdownImport(content);
 
-      for (const pageData of importedPages) {
+      // First pass: create all pages with temporary IDs
+      const pageIdMap = new Map<number, string>();
+      
+      for (let i = 0; i < importedPages.length; i++) {
+        const pageData = importedPages[i];
+        const newId = crypto.randomUUID();
+        pageIdMap.set(i, newId);
+        
+        // Determine parent ID based on __parentIndex marker
+        let parentId: string | null = null;
+        if ('__parentIndex' in pageData) {
+          const parentIndex = (pageData as any).__parentIndex;
+          parentId = pageIdMap.get(parentIndex) || null;
+        }
+        
         const newPage: Page = {
-          ...pageData,
-          id: crypto.randomUUID(),
+          title: pageData.title,
+          content: pageData.content,
+          parentId,
+          id: newId,
           createdAt: Date.now(),
           updatedAt: Date.now(),
-          order: pages.length,
+          order: pages.length + i,
         };
         await storage.savePage(newPage);
       }

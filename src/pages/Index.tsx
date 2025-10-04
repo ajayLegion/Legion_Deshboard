@@ -20,7 +20,7 @@ const Index = () => {
       if (loadedPages.length === 0) {
         const welcomePage: Page = {
           id: crypto.randomUUID(),
-          title: 'Welcome to Notion Clone',
+          title: 'Welcome to Legion Notes',
           content: '<p>Start writing your notes here! Use the formatting toolbar to style your text.</p><p><br></p><p>You can:</p><ul><li>Create nested pages</li><li>Format text with <b>bold</b>, <i>italic</i>, and more</li><li>Add lists and checkboxes</li><li>Export and import markdown files</li></ul>',
           parentId: null,
           createdAt: Date.now(),

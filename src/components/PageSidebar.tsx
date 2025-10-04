@@ -133,7 +133,7 @@ export const PageSidebar = ({
     <div className="w-64 h-screen bg-sidebar-background border-r border-sidebar-border flex flex-col">
       <div className="p-4 border-b border-sidebar-border">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-bold">Notion Clone</h1>
+          <h1 className="text-xl font-bold">Legion Notes</h1>
           <Button
             variant="ghost"
             size="sm"

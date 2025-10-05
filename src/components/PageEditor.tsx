@@ -710,11 +710,6 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
           onClose={() => setShowCoverModal(false)}
           onAddCover={handleAddCover}
         />
-        <AddCommentModal
-          isOpen={showCommentModal}
-          onClose={() => setShowCommentModal(false)}
-          onAddComment={handleAddComment}
-        />
       </div>
     </div>
   );

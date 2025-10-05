@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { PageSidebar } from '@/components/PageSidebar';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -131,10 +132,10 @@ const Dashboard: React.FC = () => {
 
   return (
     <div id="root" className="relative min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-hidden">
-     
 
       <main className="flex flex-col md:flex-row justify-between items-start p-8 gap-8">
         {/* Left Section */}
+       
         <section className="flex-1 space-y-8">
           {/* Greeting */}
           <div className="flex justify-between items-center">

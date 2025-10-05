@@ -1,79 +1,72 @@
 import React, { useState } from 'react';
 
 const WorkflowPage = () => {
-  const [tasks, setTasks] = useState([]);
-  const [notes, setNotes] = useState('');
-  const [newTask, setNewTask] = useState('');
+  const [formData, setFormData] = useState({ user: '' });
+  const [isManager, setIsManager] = useState(false);
+  const [chatResponse, setChatResponse] = useState('');
 
-  const addTask = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (newTask.trim()) {
-      setTasks([...tasks, { id: Date.now(), text: newTask, completed: false }]);
-      setNewTask('');
-    }
-  };
-
-  const toggleTask = (id) => {
-    setTasks(tasks.map(task =>
-      task.id === id ? { ...task, completed: !task.completed } : task
-    ));
-  };
-
-  const deleteTask = (id) => {
-    setTasks(tasks.filter(task => task.id !== id));
+    // Simulate AI Agent processing
+    const response = isManager ? 'Manager workflow initiated' : 'User workflow initiated';
+    setChatResponse(response);
   };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
       <h1 className="text-3xl font-bold mb-6">Workflow Manager</h1>
 
-      {/* Tasks Section */}
+      {/* Form Submission */}
       <div className="mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Tasks</h2>
-        <form onSubmit={addTask} className="mb-4">
+        <h2 className="text-2xl font-semibold mb-4">Create User Form</h2>
+        <form onSubmit={handleSubmit} className="mb-4">
           <input
             type="text"
-            value={newTask}
-            onChange={(e) => setNewTask(e.target.value)}
-            placeholder="Add a new task..."
+            value={formData.user}
+            onChange={(e) => setFormData({ ...formData, user: e.target.value })}
+            placeholder="Enter user details..."
             className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          <label className="block mt-2">
+            <input
+              type="checkbox"
+              checked={isManager}
+              onChange={(e) => setIsManager(e.target.checked)}
+              className="mr-2"
+            />
+            Is Manager?
+          </label>
           <button
             type="submit"
             className="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white p-2 rounded"
           >
-            Add Task
+            Submit
           </button>
         </form>
-        <ul className="space-y-2">
-          {tasks.map(task => (
-            <li key={task.id} className="flex items-center justify-between bg-gray-800 p-2 rounded">
-              <span
-                className={`flex-1 ${task.completed ? 'line-through text-gray-500' : ''}`}
-                onClick={() => toggleTask(task.id)}
-              >
-                {task.text}
-              </span>
-              <button
-                onClick={() => deleteTask(task.id)}
-                className="ml-4 bg-red-600 hover:bg-red-700 text-white p-1 rounded"
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
+        {chatResponse && <p className="mt-2">{chatResponse}</p>}
       </div>
 
-      {/* Notes Section */}
-      <div>
-        <h2 className="text-2xl font-semibold mb-4">Notes</h2>
-        <textarea
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="Write your notes here..."
-          className="w-full h-40 p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+      {/* Workflow Options */}
+      <div className="space-y-4">
+        <div className="flex items-center space-x-4">
+          <span className="text-gray-400">Chat Model:</span>
+          <button className="bg-gray-800 p-2 rounded">Anthropic Chat Model</button>
+          <button className="bg-gray-800 p-2 rounded">Postgres Chat Memory</button>
+        </div>
+        <div className="flex items-center space-x-4">
+          <span className="text-gray-400">Tools:</span>
+          <button className="bg-gray-800 p-2 rounded">Microsoft Entra ID</button>
+          <button className="bg-gray-800 p-2 rounded">Jira Software</button>
+        </div>
+        {isManager ? (
+          <button className="bg-green-600 hover:bg-green-700 text-white p-2 rounded">
+            Add to Channel
+          </button>
+        ) : (
+          <button className="bg-green-600 hover:bg-green-700 text-white p-2 rounded">
+            Update Profile
+          </button>
+        )}
       </div>
     </div>
   );

@@ -11,17 +11,16 @@ import {
   CheckSquare,
   Smile,
   Image as ImageIcon,
-  MessageSquare,
   X,
   Upload
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+
 
 interface PageEditorProps {
-  page: Page & { icon?: string }; // Extend Page to include optional icon
-  onUpdate: (page: Page & { icon?: string }) => void;
+  page: Page & { icon?: string; cover?: string }; // Extend Page to include optional icon and cover
+  onUpdate: (page: Page & { icon?: string; cover?: string }) => void;
 }
 
 // 1. Add Icon Modal Component (embedded)
@@ -157,58 +156,11 @@ const AddCoverModal: React.FC<{
   );
 };
 
-// 3. Add Comment Modal Component (embedded)
-const AddCommentModal: React.FC<{
-  isOpen: boolean;
-  onClose: () => void;
-  onAddComment: (comment: string) => void;
-}> = ({ isOpen, onClose, onAddComment }) => {
-  const [comment, setComment] = useState('');
-
-  const handleAdd = () => {
-    if (comment.trim()) {
-      onAddComment(comment);
-      setComment('');
-      onClose();
-    }
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-background p-6 rounded-lg max-w-md w-full mx-4">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-semibold flex items-center gap-2">
-            <MessageSquare className="h-5 w-5" />
-            Add Comment
-          </h3>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-        <Textarea
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          placeholder="Write your comment..."
-          className="min-h-[100px] mb-4"
-        />
-        <div className="flex gap-2">
-          <Button onClick={handleAdd} disabled={!comment.trim()} className="flex-1">
-            Add Comment
-          </Button>
-          <Button onClick={onClose} variant="outline" className="flex-1">
-            Cancel
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   const [title, setTitle] = useState(page.title);
   const [icon, setIcon] = useState(page.icon || '');
+  const [cover, setCover] = useState(page.cover || '');
   const [content, setContent] = useState(page.content);
   const editorRef = useRef<HTMLDivElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -228,6 +180,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   useEffect(() => {
     setTitle(page.title);
     setIcon(page.icon || '');
+    setCover(page.cover || '');
     setContent(page.content);
     if (editorRef.current) {
       editorRef.current.innerHTML = page.content;
@@ -242,6 +195,11 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   const handleIconChange = (newIcon: string) => {
     setIcon(newIcon);
     onUpdate({ ...page, icon: newIcon, updatedAt: Date.now() });
+  };
+
+  const handleCoverChange = (newCover: string) => {
+    setCover(newCover);
+    onUpdate({ ...page, cover: newCover, updatedAt: Date.now() });
   };
 
   const handleContentChange = () => {
@@ -443,13 +401,8 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
     handleIconChange(newIcon);
   };
 
-  const handleAddCover = (url: string) => {
-    // Insert cover image at the top of content
-    const coverHtml = `<div class="cover-image mb-4"><img src="${url}" alt="Cover" class="w-full h-48 object-cover rounded" /></div>`;
-    if (editorRef.current) {
-      editorRef.current.innerHTML = coverHtml + editorRef.current.innerHTML;
-      handleContentChange();
-    }
+  const handleAddCover = (newCover: string) => {
+    handleCoverChange(newCover);
   };
 
   const handleAddComment = (comment: string) => {
@@ -462,8 +415,38 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   return (
     <div className="flex-1 overflow-auto bg-background">
       <div className="max-w-[900px] mx-auto px-24 py-16 relative">
-        {/* Action buttons above title - Conditionally render Add icon if no icon */}
-        
+        {/* Page Cover - Notion-style */}
+        {cover && (
+          <div
+            className=""
+            style={{
+              gridColumnStart: 1,
+              gridColumnEnd: 'auto',
+              gridRowStart: 1,
+              gridRowEnd: 'auto',
+              width: '100%',
+              height: '100%',
+            }}
+          >
+            <img
+              alt=""
+              src={cover}
+              referrerPolicy="same-origin"
+              style={{
+                display: 'block',
+                objectFit: 'cover',
+                borderRadius: '0px',
+                width: '100%',
+                height: '30vh',
+                maxHeight: '280px',
+                opacity: 1,
+                objectPosition: 'center 70%',
+              }}
+            />
+          </div>
+        )}
+
+       
 
         {/* Page Icon - Notion-style */}
         <div
@@ -484,7 +467,8 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
             </div>
           </div>
         </div>
-<div className="flex items-center gap-3 mb-4 text-muted-foreground">
+ {/* Action buttons above title - Conditionally render Add icon if no icon */}
+        <div className="flex items-center gap-3 mb-4 text-muted-foreground">
           {!icon && (
             <Button
               variant="ghost"
@@ -496,15 +480,18 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
               Add icon
             </Button>
           )}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-auto py-1 px-2 text-sm hover:bg-accent"
-            onClick={() => setShowCoverModal(true)}
-          >
-            <ImageIcon className="h-4 w-4 mr-1.5" />
-            Add cover
-          </Button>
+          {!cover && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-auto py-1 px-2 text-sm hover:bg-accent"
+              onClick={() => setShowCoverModal(true)}
+            >
+              <ImageIcon className="h-4 w-4 mr-1.5" />
+              Add cover
+            </Button>
+          )}
+          
         </div>
         {/* Page Title */}
         <Input

@@ -174,13 +174,6 @@ export const PageSidebar = ({
           <Home className="h-4 w-4 mr-2" />
           Home
         </Button>
-        <Button
-          variant="ghost"
-          className="w-full justify-start h-8 px-2 text-sidebar-foreground hover:bg-sidebar-accent text-sm"
-        >
-          <Inbox className="h-4 w-4 mr-2" />
-          Inbox
-        </Button>
       </div>
 
       <Separator className="bg-sidebar-border" />

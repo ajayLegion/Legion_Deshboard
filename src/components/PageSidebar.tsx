@@ -198,10 +198,10 @@ export const PageSidebar = ({
 
         {/* Main Nav */}
         <div className="px-2 pb-2 space-y-0.5">
-          <Button variant="ghost" className="w-full justify-start h-8 px-2 text-sidebar-foreground hover:bg-sidebar-accent text-sm">
+         {/*<Button variant="ghost" className="w-full justify-start h-8 px-2 text-sidebar-foreground hover:bg-sidebar-accent text-sm">
             <Home className="h-4 w-4 mr-2" />
             Home
-          </Button>
+          </Button>*/}
         </div>
 
         <Separator className="bg-sidebar-border" />
@@ -227,14 +227,7 @@ export const PageSidebar = ({
         {/* Bottom Actions */}
         <Separator className="bg-sidebar-border" />
         <div className="p-2 space-y-0.5">
-          <Button
-            variant="ghost"
-            onClick={onToggleTheme}
-            className="w-full justify-start h-8 px-2 text-sidebar-foreground hover:bg-sidebar-accent text-sm"
-          >
-            {isDark ? <Sun className="h-4 w-4 mr-2" /> : <Moon className="h-4 w-4 mr-2" />}
-            {isDark ? 'Light Mode' : 'Dark Mode'}
-          </Button>
+          
           <Button variant="ghost" className="w-full justify-start h-8 px-2 text-sidebar-foreground hover:bg-sidebar-accent text-sm">
             <Settings className="h-4 w-4 mr-2" />
             Settings

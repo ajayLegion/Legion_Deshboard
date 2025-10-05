@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { storage, Page } from '@/services/storage';
 import { PageSidebar } from '@/components/PageSidebar';
 import { PageEditor } from '@/components/PageEditor';
@@ -8,12 +10,40 @@ import { FileText } from 'lucide-react';
 import Dashboard from '@/pages/Dashboard';
 
 const Index = () => {
+  const navigate = useNavigate();
   const [pages, setPages] = useState<Page[]>([]);
   const [currentPage, setCurrentPage] = useState<Page | null>(null);
   const [isDark, setIsDark] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
+    // Check authentication first
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        navigate('/login');
+      } else {
+        setIsAuthenticated(true);
+        setLoading(false);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        navigate('/login');
+      } else {
+        setIsAuthenticated(true);
+        setLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
     const initStorage = async () => {
       await storage.init();
       const loadedPages = await storage.getAllPages();
@@ -47,7 +77,7 @@ const Index = () => {
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
     }
-  }, []);
+  }, [isAuthenticated]);
 
   const handleCreatePage = async (parentId: string | null) => {
     const newPage: Page = {
@@ -181,6 +211,18 @@ const Index = () => {
       localStorage.setItem('theme', 'light');
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">

@@ -82,7 +82,7 @@ const Index = () => {
     const newPage: Page = {
       id: crypto.randomUUID(),
       title: 'Untitled',
-      content: '<p>Start writing...</p>',
+      content: '',
       parentId,
       createdAt: Date.now(),
       updatedAt: Date.now(),

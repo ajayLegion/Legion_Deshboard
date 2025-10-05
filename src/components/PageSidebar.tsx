@@ -211,7 +211,13 @@ export const PageSidebar = ({
         </div>
 
         <Separator className="bg-sidebar-border" />
-
+{/* New Page */}
+        <div className="p-2 border-t border-sidebar-border">
+          <Button onClick={() => onCreatePage(null)} className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 h-8 text-sm">
+            <Plus className="h-4 w-4 mr-2" />
+            New Page
+          </Button>
+        </div>
         {/* Pages */}
         <div className="px-2 pt-2 pb-1">
           <div className="flex items-center justify-between px-2 py-1">
@@ -254,13 +260,7 @@ export const PageSidebar = ({
           </Button>
         </div>
 
-        {/* New Page */}
-        <div className="p-2 border-t border-sidebar-border">
-          <Button onClick={() => onCreatePage(null)} className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 h-8 text-sm">
-            <Plus className="h-4 w-4 mr-2" />
-            New Page
-          </Button>
-        </div>
+        
       </div>
 
       {/* Resize handle */}

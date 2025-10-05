@@ -1,6 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [greeting, setGreeting] = useState("");
   const [date, setDate] = useState("");
   const [goal, setGoal] = useState(localStorage.getItem("dailyGoal") || "");
@@ -25,8 +30,33 @@ const Dashboard: React.FC = () => {
   });
   const [query, setQuery] = useState("");
 
+  // Check authentication
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        navigate('/login');
+      } else {
+        setIsAuthenticated(true);
+        setLoading(false);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        navigate('/login');
+      } else {
+        setIsAuthenticated(true);
+        setLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
   // Greeting and Date
   useEffect(() => {
+    if (!isAuthenticated) return;
+    
     const update = () => {
       const now = new Date();
       const hour = now.getHours();
@@ -43,7 +73,7 @@ const Dashboard: React.FC = () => {
     update();
     const interval = setInterval(update, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isAuthenticated]);
 
   // Matrix effect
   useEffect(() => {
@@ -107,6 +137,18 @@ const Dashboard: React.FC = () => {
     setBalance(newBalance);
     setLastUpdated(new Date().toLocaleString());
   };
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-black text-white">
+        <div className="text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden">

@@ -130,7 +130,7 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div id="root" className="relative min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-hidden">
+    <div id="root" className="relative min-h-screen overflow-hidden">
 
       <main className="flex flex-col md:flex-row justify-between items-start p-8 gap-8">
         {/* Left Section */}
@@ -142,13 +142,7 @@ const Dashboard: React.FC = () => {
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{greeting}</h1>
               <p className="text-gray-500 dark:text-gray-400">{date}</p>
             </div>
-            <button
-              onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
-              className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
-              aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? '☀️' : '🌙'}
-            </button>
+            
           </div>
 
           {/* Search Bar */}

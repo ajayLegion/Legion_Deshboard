@@ -84,7 +84,7 @@ export default function WorkflowPage() {
   };
 
   return (
-    <div className="h-screen w-screen flex bg-gray-900 text-white">
+    <div className="h-screen w-screen flex">
       {/* Toolbar */}
       <aside className="w-56 bg-gray-800 border-r border-gray-700 p-3 flex flex-col gap-3">
         <h2 className="text-lg font-semibold">Workflow</h2>
@@ -175,7 +175,7 @@ export default function WorkflowPage() {
         </div>
       </div>
 
-      {/* Inspector */}
+      {/* Inspector 
       <aside className="w-80 bg-gray-800 border-l border-gray-700 p-4 text-sm">
         {selectedId ? (
           <div>
@@ -186,7 +186,7 @@ export default function WorkflowPage() {
           <div className="text-gray-400">Select a node to inspect</div>
         )}
       </aside>
+    </div>*/}
     </div>
   );
-    }
-                        
+}

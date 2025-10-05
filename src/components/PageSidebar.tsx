@@ -183,7 +183,7 @@ export const PageSidebar = ({
       </div>
 
       <Separator className="bg-sidebar-border" />
-
+      
       {/* Pages Section */}
       <div className="px-2 pt-2 pb-1">
         <div className="flex items-center justify-between px-2 py-1">

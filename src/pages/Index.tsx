@@ -7,7 +7,6 @@ import { PageEditor } from '@/components/PageEditor';
 import { exportToMarkdown, downloadMarkdown, parseMarkdownImport } from '@/utils/markdown';
 import { useToast } from '@/hooks/use-toast';
 import { FileText } from 'lucide-react';
-import Dashboard from '@/pages/Dashboard';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -236,7 +235,7 @@ const Index = () => {
         onImport={handleImport}
         isDark={isDark}
         onToggleTheme={handleToggleTheme}
-        
+      
       />
 
       {currentPage ? (
@@ -244,6 +243,7 @@ const Index = () => {
           key={currentPage.id}
           page={currentPage}
           onUpdate={handleUpdatePage}
+        
         />
         
       ) : (

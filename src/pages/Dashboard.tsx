@@ -291,19 +291,7 @@ const Dashboard: React.FC = () => {
         </section>
 
         {/* Right Section */}
-        <section className="flex-1 text-center flex flex-col items-center justify-center">
-          <img
-            src="LEGION 2.0.png"
-            alt="Ajay Legion Logo"
-            className="w-56 h-auto mb-4"
-          />
-          <h1 className="text-5xl font-bold">
-            Ajay<span className="italic text-indigo-400">Legion</span>
-          </h1>
-          <p className="text-2xl font-semibold mt-2 bg-gradient-to-r from-purple-400 to-orange-400 bg-clip-text text-transparent">
-            Web Developer
-          </p>
-        </section>
+        
       </main>
     </div>
   );

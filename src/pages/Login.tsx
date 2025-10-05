@@ -82,14 +82,11 @@ const Login = () => {
       <div className="w-full max-w-md space-y-8 p-8">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-primary/10">
-            <Lock className="h-6 w-6 text-primary" />
+            
           </div>
           <h2 className="mt-6 text-3xl font-bold">
-            {isSignUp ? "Create Account" : "Welcome back"}
+            {isSignUp ? "Create Account" : "Welcome Legion"}
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {isSignUp ? "Sign up to access your workspace" : "Sign in to access your workspace"}
-          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">

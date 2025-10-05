@@ -6,11 +6,12 @@ import { PageSidebar } from '@/components/PageSidebar';
 import { PageEditor } from '@/components/PageEditor';
 import { exportToMarkdown, downloadMarkdown, parseMarkdownImport } from '@/utils/markdown';
 import { useToast } from '@/hooks/use-toast';
-import { FileText } from 'lucide-react';
+import { FileText, UserCircle2 } from 'lucide-react';
 
 // ✅ New views
 import Dashboard from '@/components/Dashboard';
 import WorkflowPage from '@/components/WorkflowPage';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -226,9 +227,17 @@ const Index = () => {
 
   return (
     <div className="flex flex-col h-screen bg-background">
+      <div className="flex justify-center border-b p-3 bg-card shadow-sm z-10">
+      {/* User Profile */}
+       
+          <Button variant="ghost" className="w-full justify-start h-auto p-2 text-sidebar-foreground hover:bg-sidebar-accent">
+            <UserCircle2 className="h-6 w-6 mr-2 shrink-0" />
+            <span className="truncate text-sm font-medium">Legion Notes</span>
+          </Button>
+        
 
       {/* ✅ Top View Navigation */}
-      <div className="flex justify-center border-b p-3 bg-card shadow-sm z-10">
+      
         <button
           className={`mx-2 px-4 py-2 rounded text-sm font-medium ${view === 'notes' ? 'bg-muted text-primary' : 'hover:bg-accent'}`}
           onClick={() => setView('notes')}
@@ -247,6 +256,7 @@ const Index = () => {
         >
           Workflow
         </button>
+      
       </div>
 
       {/* ✅ Main Content View */}

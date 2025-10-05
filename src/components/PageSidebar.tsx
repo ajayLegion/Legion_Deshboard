@@ -180,13 +180,7 @@ export const PageSidebar = ({
         className="bg-sidebar-background border-r border-sidebar-border flex flex-col"
         style={{ width: `${sidebarWidth}px`, minWidth: 120 }}
       >
-        {/* User Profile */}
-        <div className="p-3 border-b border-sidebar-border">
-          <Button variant="ghost" className="w-full justify-start h-auto p-2 text-sidebar-foreground hover:bg-sidebar-accent">
-            <UserCircle2 className="h-6 w-6 mr-2 shrink-0" />
-            <span className="truncate text-sm font-medium">Legion Notes</span>
-          </Button>
-        </div>
+        
 
         {/* Search */}
         <div className="px-3 pt-3 pb-2">

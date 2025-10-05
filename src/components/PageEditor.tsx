@@ -31,12 +31,12 @@ const AddIconModal: React.FC<{
 }> = ({ isOpen, onClose, onSelectIcon }) => {
   const [search, setSearch] = useState('');
   const commonEmojis = [
-    '😀', '😂', '🤔', '👍', '❤️', '🔥', '📝', '💡', '🚀', '🌟',
-    '📱', '💻', '📚', '🎯', '⚡', '🛡️', '🎨', '🔒', '📊', '🗓️'
+    '','😀', '😂', '🤔', '👍', '❤️', '🔥', '📝', '💡', '🚀', '🌟',
+    '📱', '💻', '📚', '🎯', '⚡', '🛡️', '🎨', '🔒', '📊', '🗓️',
   ].filter(emoji => !search || emoji.includes(search));
 
   if (!isOpen) return null;
-
+  
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-background p-6 rounded-lg max-w-sm w-full mx-4">

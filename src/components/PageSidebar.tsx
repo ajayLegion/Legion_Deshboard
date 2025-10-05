@@ -139,6 +139,7 @@ export const PageSidebar = ({
 
   return (
     <div className="w-64 bg-sidebar-background border-r border-sidebar-border flex flex-col h-screen">
+     
       {/* User Profile Section */}
       <div className="p-3 border-b border-sidebar-border">
         <Button
@@ -163,7 +164,7 @@ export const PageSidebar = ({
           />
         </div>
       </div>
-
+   
       {/* Main Navigation */}
       <div className="px-2 pb-2 space-y-0.5">
         <Button

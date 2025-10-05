@@ -20,8 +20,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
 interface PageEditorProps {
-  page: Page;
-  onUpdate: (page: Page) => void;
+  page: Page & { icon?: string }; // Extend Page to include optional icon
+  onUpdate: (page: Page & { icon?: string }) => void;
 }
 
 // 1. Add Icon Modal Component (embedded)
@@ -34,7 +34,7 @@ const AddIconModal: React.FC<{
   const commonEmojis = [
     '😀', '😂', '🤔', '👍', '❤️', '🔥', '📝', '💡', '🚀', '🌟',
     '📱', '💻', '📚', '🎯', '⚡', '🛡️', '🎨', '🔒', '📊', '🗓️'
-  ].filter(emoji => !search || emoji.includes(search)); // Fixed filter
+  ].filter(emoji => !search || emoji.includes(search));
 
   if (!isOpen) return null;
 
@@ -208,6 +208,7 @@ const AddCommentModal: React.FC<{
 
 export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   const [title, setTitle] = useState(page.title);
+  const [icon, setIcon] = useState(page.icon || '');
   const [content, setContent] = useState(page.content);
   const editorRef = useRef<HTMLDivElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -226,6 +227,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
 
   useEffect(() => {
     setTitle(page.title);
+    setIcon(page.icon || '');
     setContent(page.content);
     if (editorRef.current) {
       editorRef.current.innerHTML = page.content;
@@ -235,6 +237,11 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   const handleTitleChange = (newTitle: string) => {
     setTitle(newTitle);
     onUpdate({ ...page, title: newTitle, updatedAt: Date.now() });
+  };
+
+  const handleIconChange = (newIcon: string) => {
+    setIcon(newIcon);
+    onUpdate({ ...page, icon: newIcon, updatedAt: Date.now() });
   };
 
   const handleContentChange = () => {
@@ -432,10 +439,8 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   }, []);
 
   // Modal handlers
-  const handleAddIcon = (icon: string) => {
-    const newTitle = `${icon} ${title}`;
-    setTitle(newTitle);
-    onUpdate({ ...page, title: newTitle, updatedAt: Date.now() });
+  const handleAddIcon = (newIcon: string) => {
+    handleIconChange(newIcon);
   };
 
   const handleAddCover = (url: string) => {
@@ -456,18 +461,41 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
 
   return (
     <div className="flex-1 overflow-auto bg-background">
-      <div className="max-w-[900px] mx-auto px-24 py-16">
-        {/* Action buttons above title */}
-        <div className="flex items-center gap-3 mb-4 text-muted-foreground">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-auto py-1 px-2 text-sm hover:bg-accent"
-            onClick={() => setShowIconModal(true)}
-          >
-            <Smile className="h-4 w-4 mr-1.5" />
-            Add icon
-          </Button>
+      <div className="max-w-[900px] mx-auto px-24 py-16 relative">
+        {/* Action buttons above title - Conditionally render Add icon if no icon */}
+        
+
+        {/* Page Icon - Notion-style */}
+        <div
+          role="button"
+          tabIndex={0}
+          className="flex items-center justify-center h-[78px] w-[78px] rounded-[0.25em] flex-shrink-0 relative z-[1] ms-3 -mt-[42px] pointer-events-auto"
+          aria-label={`${icon} Change page icon`}
+          onClick={() => setShowIconModal(true)}
+          onKeyDown={(e) => e.key === 'Enter' && setShowIconModal(true)}
+          style={{ userSelect: 'none' }}
+        >
+          <div className="flex items-center justify-center h-[78px] w-[78px]">
+            <div
+              className="flex items-center justify-center h-[78px] w-[78px] text-[78px] leading-[1] -ms-[5px] text-gray-600 dark:text-gray-400"
+              style={{ fontFamily: '"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"' }}
+            >
+              <span style={{ whiteSpace: 'nowrap' }}>{icon}</span>
+            </div>
+          </div>
+        </div>
+<div className="flex items-center gap-3 mb-4 text-muted-foreground">
+          {!icon && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-auto py-1 px-2 text-sm hover:bg-accent"
+              onClick={() => setShowIconModal(true)}
+            >
+              <Smile className="h-4 w-4 mr-1.5" />
+              Add icon
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="sm"
@@ -477,17 +505,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
             <ImageIcon className="h-4 w-4 mr-1.5" />
             Add cover
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-auto py-1 px-2 text-sm hover:bg-accent"
-            onClick={() => setShowCommentModal(true)}
-          >
-            <MessageSquare className="h-4 w-4 mr-1.5" />
-            Add comment
-          </Button>
         </div>
-
         {/* Page Title */}
         <Input
           ref={titleInputRef}

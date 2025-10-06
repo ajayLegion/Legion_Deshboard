@@ -33,6 +33,7 @@ interface ToolbarDialogProps {
   insertCodeBlock: () => void;
   insertTable: () => void;
   insertHorizontalRule: () => void;
+    insertImage: () => void;
 }
 
 const ToolbarDialog: React.FC<ToolbarDialogProps> = ({
@@ -43,6 +44,7 @@ const ToolbarDialog: React.FC<ToolbarDialogProps> = ({
   insertLink,
   insertCodeBlock,
   insertTable,
+  insertImage,
   insertHorizontalRule,
 }) => {
   return (
@@ -117,6 +119,9 @@ const ToolbarDialog: React.FC<ToolbarDialogProps> = ({
             </Button>
             <Button variant="ghost" size="sm" onClick={insertHorizontalRule} title="Divider">
               <Minus className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={insertImage} title="Image (Ctrl+Shift+I)">
+                <img src="https://img.icons8.com/ios-glyphs/30/000000/image.png" alt="Image" className="h-4 w-4" />
             </Button>
           </div>
         </div>

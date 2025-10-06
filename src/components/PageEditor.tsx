@@ -625,6 +625,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   insertCodeBlock={insertCodeBlock}
   insertTable={insertTable}
   insertHorizontalRule={insertHorizontalRule}
+  insertImage={insertImage} 
 />
           {!icon && (
             <Button
@@ -674,7 +675,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
 
         {/* Formatting Toolbar */}
       
-       <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">AI</div> <Button variant="ghost" size="sm" className="h-9 justify-start w-full" onClick={() => { triggerAI(); setShowSlashMenu(false); }} disabled={aiLoading} >AI</Button>
+       <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide"></div> <Button variant="ghost" size="sm" className="h-9 justify-start w-full" onClick={() => { triggerAI(); setShowSlashMenu(false); }} disabled={aiLoading} >AI</Button>
   
         {/* AI Suggestion Instructions (if active) */}
         {showSuggestion && (

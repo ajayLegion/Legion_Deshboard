@@ -12,7 +12,14 @@ import {
   Smile,
   Image as ImageIcon,
   X,
-  Upload
+  Upload,
+  Strikethrough,
+  Code,
+  Quote,
+  Link,
+  Minus,
+  Table,
+  AlignLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -225,10 +232,112 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   const insertImage = async () => {
     const url = prompt('Enter image URL:');
     if (url) {
-      const img = `<img src="${url}" alt="Image" class="max-w-full h-auto my-2" />`;
+      const img = `<img src="${url}" alt="Image" class="max-w-full h-auto my-2 rounded-lg" />`;
       document.execCommand('insertHTML', false, img);
       handleContentChange();
     }
+  };
+
+  const insertLink = () => {
+    const url = prompt('Enter link URL:');
+    if (url) {
+      const text = window.getSelection()?.toString() || 'Link';
+      const link = `<a href="${url}" class="text-primary underline hover:text-primary/80" target="_blank" rel="noopener noreferrer">${text}</a>`;
+      document.execCommand('insertHTML', false, link);
+      handleContentChange();
+    }
+  };
+
+  const insertCodeBlock = () => {
+    const code = '<pre class="bg-muted p-4 rounded-lg my-2 overflow-x-auto"><code contenteditable="true">// Your code here</code></pre>';
+    document.execCommand('insertHTML', false, code);
+    handleContentChange();
+  };
+
+  const insertInlineCode = () => {
+    const selection = window.getSelection()?.toString() || 'code';
+    const code = `<code class="bg-muted px-2 py-1 rounded text-sm font-mono">${selection}</code>`;
+    document.execCommand('insertHTML', false, code);
+    handleContentChange();
+  };
+
+  const insertBlockquote = () => {
+    applyFormat('formatBlock', '<blockquote>');
+    editorRef.current?.querySelectorAll('blockquote').forEach((q) => {
+      q.className = 'border-l-4 border-primary pl-4 italic my-2 text-muted-foreground';
+    });
+    handleContentChange();
+  };
+
+  const insertHorizontalRule = () => {
+    const hr = '<hr class="my-4 border-t-2 border-muted" />';
+    document.execCommand('insertHTML', false, hr);
+    handleContentChange();
+  };
+
+  const insertTable = () => {
+    const table = `
+      <table class="w-full my-4 border-collapse">
+        <thead>
+          <tr>
+            <th class="border border-muted p-2 bg-muted/50">Header 1</th>
+            <th class="border border-muted p-2 bg-muted/50">Header 2</th>
+            <th class="border border-muted p-2 bg-muted/50">Header 3</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="border border-muted p-2" contenteditable="true">Cell 1</td>
+            <td class="border border-muted p-2" contenteditable="true">Cell 2</td>
+            <td class="border border-muted p-2" contenteditable="true">Cell 3</td>
+          </tr>
+          <tr>
+            <td class="border border-muted p-2" contenteditable="true">Cell 4</td>
+            <td class="border border-muted p-2" contenteditable="true">Cell 5</td>
+            <td class="border border-muted p-2" contenteditable="true">Cell 6</td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+    document.execCommand('insertHTML', false, table);
+    handleContentChange();
+  };
+
+  const convertMarkdownSyntax = (text: string) => {
+    // Auto-convert markdown syntax
+    if (text.endsWith('**') && text.length > 2) {
+      const match = text.match(/\*\*([^*]+)\*\*$/);
+      if (match) {
+        const boldText = match[1];
+        document.execCommand('insertHTML', false, `<strong>${boldText}</strong>`);
+        return true;
+      }
+    }
+    if (text.endsWith('*') && text.length > 1) {
+      const match = text.match(/\*([^*]+)\*$/);
+      if (match) {
+        const italicText = match[1];
+        document.execCommand('insertHTML', false, `<em>${italicText}</em>`);
+        return true;
+      }
+    }
+    if (text.endsWith('`') && text.length > 1) {
+      const match = text.match(/`([^`]+)`$/);
+      if (match) {
+        const codeText = match[1];
+        document.execCommand('insertHTML', false, `<code class="bg-muted px-2 py-1 rounded text-sm font-mono">${codeText}</code>`);
+        return true;
+      }
+    }
+    if (text.endsWith('~~') && text.length > 2) {
+      const match = text.match(/~~([^~]+)~~$/);
+      if (match) {
+        const strikeText = match[1];
+        document.execCommand('insertHTML', false, `<s>${strikeText}</s>`);
+        return true;
+      }
+    }
+    return false;
   };
 
   const triggerAI = async () => {
@@ -333,6 +442,30 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    // Markdown keyboard shortcuts
+    if (e.ctrlKey || e.metaKey) {
+      if (e.key === 'b') {
+        e.preventDefault();
+        applyFormat('bold');
+        return;
+      }
+      if (e.key === 'i') {
+        e.preventDefault();
+        applyFormat('italic');
+        return;
+      }
+      if (e.key === 'k') {
+        e.preventDefault();
+        insertLink();
+        return;
+      }
+      if (e.key === 'e') {
+        e.preventDefault();
+        insertInlineCode();
+        return;
+      }
+    }
+
     if (e.key === '/') {
       e.preventDefault();
       const selection = window.getSelection();
@@ -354,9 +487,23 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
       setShowSlashMenu(false);
     }
 
-    if (e.key === ' ' && !showSuggestion && !aiLoading) {
-      // Trigger AI after space (debounce could be added)
-      setTimeout(triggerAI, 100);
+    // Auto-convert markdown syntax on space
+    if (e.key === ' ') {
+      const selection = window.getSelection();
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        const textNode = range.startContainer as Text;
+        const text = textNode.textContent?.slice(0, range.startOffset) || '';
+        
+        if (convertMarkdownSyntax(text)) {
+          e.preventDefault();
+          return;
+        }
+      }
+      
+      if (!showSuggestion && !aiLoading) {
+        setTimeout(triggerAI, 100);
+      }
       return;
     }
 
@@ -509,92 +656,175 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
           onInput={handleContentChange}
           onKeyDown={handleKeyDown}
           className="editor-content min-h-[500px] outline-none text-base leading-relaxed"
-          data-placeholder="Write, press 'space' for AI, '/' for commands..."
+          data-placeholder="Type '/' for commands, or use markdown: **bold**, *italic*, `code`, ~~strikethrough~~"
           suppressContentEditableWarning
         />
 
         {/* Formatting Toolbar */}
-        <div className="mt-4 flex items-center gap-1 p-1 bg-card rounded-lg shadow-lg border">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => applyFormat('bold')}
-            className="h-7 w-7 p-0"
-          >
-            <Bold className="h-3.5 w-3.5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => applyFormat('italic')}
-            className="h-7 w-7 p-0"
-          >
-            <Italic className="h-3.5 w-3.5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => applyFormat('formatBlock', '<h1>')}
-            className="h-7 w-7 p-0"
-          >
-            <Heading1 className="h-3.5 w-3.5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => applyFormat('formatBlock', '<h2>')}
-            className="h-7 w-7 p-0"
-          >
-            <Heading2 className="h-3.5 w-3.5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => applyFormat('formatBlock', '<h3>')}
-            className="h-7 w-7 p-0"
-          >
-            <Heading3 className="h-3.5 w-3.5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => applyFormat('insertUnorderedList')}
-            className="h-7 w-7 p-0"
-          >
-            <List className="h-3.5 w-3.5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => applyFormat('insertOrderedList')}
-            className="h-7 w-7 p-0"
-          >
-            <ListOrdered className="h-3.5 w-3.5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={insertCheckbox}
-            className="h-7 w-7 p-0"
-          >
-            <CheckSquare className="h-3.5 w-3.5" />
-          </Button>
+        <div className="mt-4 flex flex-wrap items-center gap-1 p-2 bg-card rounded-lg shadow-lg border">
+          <div className="flex items-center gap-1 border-r pr-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => applyFormat('bold')}
+              className="h-8 w-8 p-0"
+              title="Bold (Ctrl+B)"
+            >
+              <Bold className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => applyFormat('italic')}
+              className="h-8 w-8 p-0"
+              title="Italic (Ctrl+I)"
+            >
+              <Italic className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => applyFormat('strikethrough')}
+              className="h-8 w-8 p-0"
+              title="Strikethrough (~~text~~)"
+            >
+              <Strikethrough className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={insertInlineCode}
+              className="h-8 w-8 p-0"
+              title="Inline Code (Ctrl+E)"
+            >
+              <Code className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-1 border-r pr-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => applyFormat('formatBlock', '<h1>')}
+              className="h-8 w-8 p-0"
+              title="Heading 1"
+            >
+              <Heading1 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => applyFormat('formatBlock', '<h2>')}
+              className="h-8 w-8 p-0"
+              title="Heading 2"
+            >
+              <Heading2 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => applyFormat('formatBlock', '<h3>')}
+              className="h-8 w-8 p-0"
+              title="Heading 3"
+            >
+              <Heading3 className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-1 border-r pr-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => applyFormat('insertUnorderedList')}
+              className="h-8 w-8 p-0"
+              title="Bullet List"
+            >
+              <List className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => applyFormat('insertOrderedList')}
+              className="h-8 w-8 p-0"
+              title="Numbered List"
+            >
+              <ListOrdered className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={insertCheckbox}
+              className="h-8 w-8 p-0"
+              title="Checkbox"
+            >
+              <CheckSquare className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={insertBlockquote}
+              className="h-8 w-8 p-0"
+              title="Quote"
+            >
+              <Quote className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={insertLink}
+              className="h-8 w-8 p-0"
+              title="Link (Ctrl+K)"
+            >
+              <Link className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={insertCodeBlock}
+              className="h-8 w-8 p-0"
+              title="Code Block"
+            >
+              <Code className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={insertTable}
+              className="h-8 w-8 p-0"
+              title="Table"
+            >
+              <Table className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={insertHorizontalRule}
+              className="h-8 w-8 p-0"
+              title="Divider"
+            >
+              <Minus className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         {/* Slash Command Menu */}
         {showSlashMenu && (
           <div
-            className="absolute bg-card border rounded-lg shadow-lg p-2 z-50 max-w-xs"
+            className="absolute bg-card border rounded-lg shadow-xl p-3 z-50 w-96"
             style={{
               top: slashPosition.top,
               left: slashPosition.left,
             }}
           >
-            <div className="grid grid-cols-2 gap-2 text-sm">
+            <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Basic Blocks</div>
+            <div className="grid grid-cols-2 gap-1 text-sm mb-3">
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 justify-start"
+                className="h-9 justify-start"
                 onClick={() => {
                   applyFormat('formatBlock', '<h1>');
                   setShowSlashMenu(false);
@@ -606,7 +836,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 justify-start"
+                className="h-9 justify-start"
                 onClick={() => {
                   applyFormat('formatBlock', '<h2>');
                   setShowSlashMenu(false);
@@ -618,43 +848,75 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 justify-start"
+                className="h-9 justify-start"
+                onClick={() => {
+                  applyFormat('formatBlock', '<h3>');
+                  setShowSlashMenu(false);
+                }}
+              >
+                <Heading3 className="h-4 w-4 mr-2" />
+                Heading 3
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-9 justify-start"
+                onClick={() => {
+                  insertBlockquote();
+                  setShowSlashMenu(false);
+                }}
+              >
+                <Quote className="h-4 w-4 mr-2" />
+                Quote
+              </Button>
+            </div>
+
+            <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Lists</div>
+            <div className="grid grid-cols-2 gap-1 text-sm mb-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-9 justify-start"
                 onClick={() => {
                   applyFormat('insertUnorderedList');
                   setShowSlashMenu(false);
                 }}
               >
                 <List className="h-4 w-4 mr-2" />
-                Bullet list
+                Bullet List
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 justify-start"
+                className="h-9 justify-start"
                 onClick={() => {
                   applyFormat('insertOrderedList');
                   setShowSlashMenu(false);
                 }}
               >
                 <ListOrdered className="h-4 w-4 mr-2" />
-                Numbered list
+                Numbered List
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 justify-start"
+                className="h-9 justify-start"
                 onClick={() => {
                   insertCheckbox();
                   setShowSlashMenu(false);
                 }}
               >
                 <CheckSquare className="h-4 w-4 mr-2" />
-                Checklist
+                To-do List
               </Button>
+            </div>
+
+            <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Media & Advanced</div>
+            <div className="grid grid-cols-2 gap-1 text-sm mb-3">
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 justify-start col-span-2"
+                className="h-9 justify-start"
                 onClick={() => {
                   insertImage();
                   setShowSlashMenu(false);
@@ -666,16 +928,66 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 justify-start col-span-2"
+                className="h-9 justify-start"
                 onClick={() => {
-                  triggerAI();
+                  insertLink();
                   setShowSlashMenu(false);
                 }}
-                disabled={aiLoading}
               >
-                🤖 AI Complete
+                <Link className="h-4 w-4 mr-2" />
+                Link
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-9 justify-start"
+                onClick={() => {
+                  insertCodeBlock();
+                  setShowSlashMenu(false);
+                }}
+              >
+                <Code className="h-4 w-4 mr-2" />
+                Code Block
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-9 justify-start"
+                onClick={() => {
+                  insertTable();
+                  setShowSlashMenu(false);
+                }}
+              >
+                <Table className="h-4 w-4 mr-2" />
+                Table
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-9 justify-start"
+                onClick={() => {
+                  insertHorizontalRule();
+                  setShowSlashMenu(false);
+                }}
+              >
+                <Minus className="h-4 w-4 mr-2" />
+                Divider
               </Button>
             </div>
+
+            <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">AI</div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-9 justify-start w-full"
+              onClick={() => {
+                triggerAI();
+                setShowSlashMenu(false);
+              }}
+              disabled={aiLoading}
+            >
+              🤖 AI Complete
+            </Button>
           </div>
         )}
 

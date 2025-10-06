@@ -210,11 +210,7 @@ export default function TableEditor() {
           </div>
         </div>
 
-        {/* Example Table */}
-        <div className="mt-8 p-6 bg-slate-800 rounded-lg border border-slate-700">
-          <h2 className="text-white text-lg font-semibold mb-4">Example Output</h2>
-         
-        </div>
+        
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { Smile,Image as ImageIcon,X, Upload,} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ToolbarDialog from "@/components/ToolbarDialog";
+
 // Inside your component's return:
 interface PageEditorProps {
   page: Page & { icon?: string; cover?: string }; // Extend Page to include optional icon and cover

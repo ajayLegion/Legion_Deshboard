@@ -263,19 +263,54 @@ const Dashboard: React.FC = () => {
         </section>
 
         {/* Right Section */}
-        <section className="flex-1 text-center flex flex-col items-center justify-center">
+     <section className="flex-1 text-center flex flex-col items-center justify-center relative overflow-hidden py-20">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gray-300/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-white/3 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 space-y-8 px-4">
+        {/* Logo with hover effect */}
+        <div className="relative group">
+          <div className="absolute -inset-4 bg-gradient-to-r from-black via-gray-200 to-black rounded-full opacity-10 blur-xl group-hover:opacity-20 transition-opacity duration-500"></div>
           <img
             src="/legion.png"
             alt="Ajay Legion Logo"
-            className="w-56 h-auto mb-4"
+            className="w-64 h-auto relative z-10 drop-shadow-2xl transform group-hover:scale-105 transition-transform duration-300"
           />
-          <h1 className="text-5xl font-bold">
-            Ajay<span className="italic text-indigo-400">Legion</span>
+        </div>
+
+        {/* Name with gradient and animation */}
+        <div className="space-y-3">
+          <h1 className="text-7xl font-bold tracking-tight">
+            <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+              Ajay
+            </span>
+            <span className="italic bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
+              Legion
+            </span>
           </h1>
-          <p className="text-2xl font-semibold mt-2 bg-gradient-to-r from-purple-400 to-orange-400 bg-clip-text text-transparent">
+          
+          {/* Role with enhanced gradient */}
+          <p className="text-3xl font-semibold bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 bg-clip-text text-transparent animate-pulse">
             Web Developer
           </p>
-        </section>
+        </div>
+
+        {/* Decorative line */}
+        <div className="flex items-center justify-center gap-4">
+          <div className="h-px w-16 bg-gradient-to-r from-transparent via-indigo-500 to-transparent"></div>
+          <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
+          <div className="h-px w-16 bg-gradient-to-r from-transparent via-indigo-500 to-transparent"></div>
+        </div>
+      </div>
+
+
+      {/* Bottom gradient fade */}
+     </section>
       </main>
     </div>
   );

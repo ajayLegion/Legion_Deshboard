@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { Page } from '@/services/storage';
-import { Smile,Image as ImageIcon,X, Upload,} from 'lucide-react';
+import { Smile,Image as ImageIcon,X, Upload,Table} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ToolbarDialog from "@/components/ToolbarDialog";
+
 
 // Inside your component's return:
 interface PageEditorProps {
@@ -157,6 +158,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   const [showSuggestion, setShowSuggestion] = useState(false);
   const [suggestion, setSuggestion] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
+   
 
   useEffect(() => {
     setTitle(page.title);
@@ -249,65 +251,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
     handleContentChange();
   };
 
-  const insertTable = () => {
-  const table = `
-     <table className="w-full border-collapse rounded-lg overflow-hidden" style={{ borderSpacing: 0 }}>
-            {hasHeaderRow && (
-              <thead>
-                <tr className="bg-slate-700/30">
-                  {Array(cols).fill(0).map((_, i) => (
-                    <th
-                      key={i}
-                      className="border-b border-r border-slate-600 p-3 text-left font-medium text-sm text-slate-300 hover:bg-slate-700/50 transition-colors last:border-r-0"
-                      style={{ minWidth: '150px' }}
-                    >
-                      Header {i + 1}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-            )}
-            <tbody>
-              {Array(rows).fill(0).map((_, rowIdx) => (
-                <tr key={rowIdx} className="hover:bg-slate-700/20 transition-colors">
-                  {Array(cols).fill(0).map((_, colIdx) => (
-                    <td
-                      key={colIdx}
-                      className="border-b border-r border-slate-600 p-3 text-sm text-slate-300 last:border-r-0"
-                    >
-                      Cell {rowIdx * cols + colIdx + 1}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-  `;
   
-  document.execCommand('insertHTML', false, table);
-  handleContentChange();
-  
-  // Add placeholder behavior
-  setTimeout(() => {
-    const cells = document.querySelectorAll('td[contenteditable="true"], th[contenteditable="true"]');
-    cells.forEach(cell => {
-      cell.addEventListener('focus', function() {
-        if (this.textContent.trim() === '' || this.textContent === this.dataset.placeholder) {
-          this.textContent = '';
-        }
-      });
-      
-      cell.addEventListener('blur', function() {
-        if (this.textContent.trim() === '' && this.dataset.placeholder) {
-          this.classList.add('text-muted-foreground/40');
-        } else {
-          this.classList.remove('text-muted-foreground/40');
-        }
-      });
-    });
-  }, 100);
-};
-
   const convertMarkdownSyntax = (text: string) => {
     // Auto-convert markdown syntax
     if (text.endsWith('**') && text.length > 2) {
@@ -619,10 +563,11 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   insertBlockquote={insertBlockquote}
   insertLink={insertLink}
   insertCodeBlock={insertCodeBlock}
-  insertTable={insertTable}
+ 
   insertHorizontalRule={insertHorizontalRule}
   insertImage={insertImage} 
 />
+
           {!icon && (
             <Button
               variant="ghost"

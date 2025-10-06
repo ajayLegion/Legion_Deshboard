@@ -27,8 +27,6 @@ import { Input } from '@/components/ui/input';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 
@@ -671,7 +669,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
         {/* Formatting Toolbar */}
       
     <Dialog>
-      <DialogTrigger asChild id="formatting-toolbar" className="top-auto left-auto">
+      <DialogTrigger asChild  className="top-auto left-auto">
         <Button variant="outline" className="text-sm">
            <Plus className="h-4 w-4" />
         </Button>
@@ -679,7 +677,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
 
       <DialogContent className="max-w-fit overflow-x-hidden h-60">
           {/* Text Styles */}
-          <div className="flex  flex-col gap-1 flex-wrap ">
+          <div className="flex  flex-col  flex-wrap ">
             <Button variant="ghost" size="sm" onClick={() => applyFormat("bold")} title="Bold (Ctrl+B)">
               <Bold className="h-4 w-4" />
               <span>Bold</span>
@@ -754,18 +752,14 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
               </Button>
           
         </div>
-      </DialogContent>
-    </Dialog>
-  
+      
+    </DialogContent>
         {/* Slash Command Menu */}
-        {showSlashMenu && (
-          <div
-            className="absolute bg-card border rounded-lg shadow-xl p-3 z-50 w-96"
-            style={{
-              top: slashPosition.top,
-              left: slashPosition.left,
-            }}
-          >
+       
+      
+    </Dialog>
+ {showSlashMenu && (
+          <div>
             <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Basic Blocks</div>
             <div className="grid grid-cols-2 gap-1 text-sm mb-3">
               <Button
@@ -937,7 +931,6 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
             </Button>
           </div>
         )}
-
         {/* AI Suggestion Instructions (if active) */}
         {showSuggestion && (
           <div className="fixed bottom-4 right-4 bg-muted p-2 rounded-lg text-sm text-muted-foreground z-40">

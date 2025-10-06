@@ -275,7 +275,7 @@ const Dashboard: React.FC = () => {
       <div className="relative z-10 space-y-8 px-4">
         {/* Logo with hover effect */}
         <div className="relative group">
-          <div className="absolute -inset-4 bg-gradient-to-r from-black via-gray-200 to-black rounded-full opacity-10 blur-xl group-hover:opacity-20 transition-opacity duration-500"></div>
+          <div className="absolute -inset-4 bg-gradient-to-r from-white via-gray-200 to-white rounded-full opacity-10 blur-xl group-hover:opacity-20 transition-opacity duration-500"></div>
           <img
             src="/legion.png"
             alt="Ajay Legion Logo"
@@ -285,11 +285,11 @@ const Dashboard: React.FC = () => {
 
         {/* Name with gradient and animation */}
         <div className="space-y-3">
-          <h1 className="text-7xl font-bold tracking-tight">
-            <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+          <h1 className="text-7xl font-bold tracking-tight dark:text-white">
+            <span className="bg-gradient-to-r from-black to-black bg-clip-text text-transparent dark:text-white">
               Ajay
             </span>
-            <span className="italic bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
+            <span className="italic bg-gradient-to-r from-black via-black to-black bg-clip-text text-transparent dark:text-white">
               Legion
             </span>
           </h1>

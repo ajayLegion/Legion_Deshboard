@@ -265,7 +265,7 @@ const Dashboard: React.FC = () => {
         {/* Right Section */}
         <section className="flex-1 text-center flex flex-col items-center justify-center">
           <img
-            src="LEGION 2.0.png"
+            src="/legion.png"
             alt="Ajay Legion Logo"
             className="w-56 h-auto mb-4"
           />

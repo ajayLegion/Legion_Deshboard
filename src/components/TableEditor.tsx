@@ -213,37 +213,7 @@ export default function TableEditor() {
         {/* Example Table */}
         <div className="mt-8 p-6 bg-slate-800 rounded-lg border border-slate-700">
           <h2 className="text-white text-lg font-semibold mb-4">Example Output</h2>
-          <table className="w-full border-collapse rounded-lg overflow-hidden" style={{ borderSpacing: 0 }}>
-            {hasHeaderRow && (
-              <thead>
-                <tr className="bg-slate-700/30">
-                  {Array(cols).fill(0).map((_, i) => (
-                    <th
-                      key={i}
-                      className="border-b border-r border-slate-600 p-3 text-left font-medium text-sm text-slate-300 hover:bg-slate-700/50 transition-colors last:border-r-0"
-                      style={{ minWidth: '150px' }}
-                    >
-                      Header {i + 1}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-            )}
-            <tbody>
-              {Array(rows).fill(0).map((_, rowIdx) => (
-                <tr key={rowIdx} className="hover:bg-slate-700/20 transition-colors">
-                  {Array(cols).fill(0).map((_, colIdx) => (
-                    <td
-                      key={colIdx}
-                      className="border-b border-r border-slate-600 p-3 text-sm text-slate-300 last:border-r-0"
-                    >
-                      Cell {rowIdx * cols + colIdx + 1}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+         
         </div>
       </div>
     </div>

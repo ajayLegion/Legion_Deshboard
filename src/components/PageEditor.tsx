@@ -250,45 +250,37 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
 
   const insertTable = () => {
   const table = `
-    <table class="w-full my-4 border-collapse bg-background rounded-lg overflow-hidden shadow-sm" style="border-spacing: 0;">
-      <thead>
-        <tr class="bg-muted/30">
-          <th class="border-b border-r border-border p-3 text-left font-medium text-sm text-muted-foreground hover:bg-muted/50 transition-colors" contenteditable="true" style="min-width: 150px;">
-            Header 1
-          </th>
-          <th class="border-b border-r border-border p-3 text-left font-medium text-sm text-muted-foreground hover:bg-muted/50 transition-colors" contenteditable="true" style="min-width: 150px;">
-            Header 2
-          </th>
-          <th class="border-b border-border p-3 text-left font-medium text-sm text-muted-foreground hover:bg-muted/50 transition-colors" contenteditable="true" style="min-width: 150px;">
-            Header 3
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="hover:bg-muted/20 transition-colors">
-          <td class="border-b border-r border-border p-3 text-sm" contenteditable="true" data-placeholder="Empty">
-            Cell 1
-          </td>
-          <td class="border-b border-r border-border p-3 text-sm" contenteditable="true" data-placeholder="Empty">
-            Cell 2
-          </td>
-          <td class="border-b border-border p-3 text-sm" contenteditable="true" data-placeholder="Empty">
-            Cell 3
-          </td>
-        </tr>
-        <tr class="hover:bg-muted/20 transition-colors">
-          <td class="border-b border-r border-border p-3 text-sm" contenteditable="true" data-placeholder="Empty">
-            Cell 4
-          </td>
-          <td class="border-b border-r border-border p-3 text-sm" contenteditable="true" data-placeholder="Empty">
-            Cell 5
-          </td>
-          <td class="border-b border-border p-3 text-sm" contenteditable="true" data-placeholder="Empty">
-            Cell 6
-          </td>
-        </tr>
-      </tbody>
-    </table>
+     <table className="w-full border-collapse rounded-lg overflow-hidden" style={{ borderSpacing: 0 }}>
+            {hasHeaderRow && (
+              <thead>
+                <tr className="bg-slate-700/30">
+                  {Array(cols).fill(0).map((_, i) => (
+                    <th
+                      key={i}
+                      className="border-b border-r border-slate-600 p-3 text-left font-medium text-sm text-slate-300 hover:bg-slate-700/50 transition-colors last:border-r-0"
+                      style={{ minWidth: '150px' }}
+                    >
+                      Header {i + 1}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+            )}
+            <tbody>
+              {Array(rows).fill(0).map((_, rowIdx) => (
+                <tr key={rowIdx} className="hover:bg-slate-700/20 transition-colors">
+                  {Array(cols).fill(0).map((_, colIdx) => (
+                    <td
+                      key={colIdx}
+                      className="border-b border-r border-slate-600 p-3 text-sm text-slate-300 last:border-r-0"
+                    >
+                      Cell {rowIdx * cols + colIdx + 1}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
   `;
   
   document.execCommand('insertHTML', false, table);

@@ -11,6 +11,7 @@ import { FileText, Moon, Sun, UserCircle2 } from 'lucide-react';
 // ✅ New views
 import Dashboard from '@/components/Dashboard';
 import WorkflowPage from '@/components/WorkflowPage';
+import test from '@/components/test';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
@@ -254,6 +255,12 @@ const Index = () => {
           onClick={() => setView('workflow')}
         >
           Workflow
+        </button>
+         <button
+          className={`mx-2 px-4 py-2 rounded text-sm font-medium ${view === 'test' ? 'bg-muted text-primary' : 'hover:bg-accent'}`}
+          onClick={() => setView('test')}
+        >
+          test
         </button>
       <Button
             variant="ghost"

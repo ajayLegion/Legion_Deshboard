@@ -40,8 +40,6 @@ export const PageSidebar = ({
   onDeletePage,
   onExport,
   onImport,
-  isDark,
-  onToggleTheme,
 }: PageSidebarProps) => {
   const [expandedPages, setExpandedPages] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');

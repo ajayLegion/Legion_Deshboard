@@ -23,6 +23,13 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 
 interface PageEditorProps {
@@ -661,154 +668,85 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
         />
 
         {/* Formatting Toolbar */}
-        <div className="mt-4 flex flex-wrap items-center gap-1 p-2 bg-card rounded-lg shadow-lg border">
-          <div className="flex items-center gap-1 border-r pr-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => applyFormat('bold')}
-              className="h-8 w-8 p-0"
-              title="Bold (Ctrl+B)"
-            >
+      
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="text-sm">
+          Open Formatting Tools
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent className="max-w-3xl">
+        <DialogHeader>
+          <DialogTitle>Formatting Tools</DialogTitle>
+        </DialogHeader>
+
+        <div className="mt-2 flex flex-wrap items-center gap-2 p-3 bg-card rounded-lg border shadow-sm">
+          {/* Text Styles */}
+          <div className="flex items-center gap-1 border-r pr-3">
+            <Button variant="ghost" size="sm" onClick={() => applyFormat("bold")} title="Bold (Ctrl+B)">
               <Bold className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => applyFormat('italic')}
-              className="h-8 w-8 p-0"
-              title="Italic (Ctrl+I)"
-            >
+            <Button variant="ghost" size="sm" onClick={() => applyFormat("italic")} title="Italic (Ctrl+I)">
               <Italic className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => applyFormat('strikethrough')}
-              className="h-8 w-8 p-0"
-              title="Strikethrough (~~text~~)"
-            >
+            <Button variant="ghost" size="sm" onClick={() => applyFormat("strikethrough")} title="Strikethrough">
               <Strikethrough className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={insertInlineCode}
-              className="h-8 w-8 p-0"
-              title="Inline Code (Ctrl+E)"
-            >
+            <Button variant="ghost" size="sm" onClick={insertInlineCode} title="Inline Code (Ctrl+E)">
               <Code className="h-4 w-4" />
             </Button>
           </div>
 
-          <div className="flex items-center gap-1 border-r pr-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => applyFormat('formatBlock', '<h1>')}
-              className="h-8 w-8 p-0"
-              title="Heading 1"
-            >
+          {/* Headings */}
+          <div className="flex items-center gap-1 border-r pr-3">
+            <Button variant="ghost" size="sm" onClick={() => applyFormat("formatBlock", "<h1>")} title="Heading 1">
               <Heading1 className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => applyFormat('formatBlock', '<h2>')}
-              className="h-8 w-8 p-0"
-              title="Heading 2"
-            >
+            <Button variant="ghost" size="sm" onClick={() => applyFormat("formatBlock", "<h2>")} title="Heading 2">
               <Heading2 className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => applyFormat('formatBlock', '<h3>')}
-              className="h-8 w-8 p-0"
-              title="Heading 3"
-            >
+            <Button variant="ghost" size="sm" onClick={() => applyFormat("formatBlock", "<h3>")} title="Heading 3">
               <Heading3 className="h-4 w-4" />
             </Button>
           </div>
 
-          <div className="flex items-center gap-1 border-r pr-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => applyFormat('insertUnorderedList')}
-              className="h-8 w-8 p-0"
-              title="Bullet List"
-            >
+          {/* Lists */}
+          <div className="flex items-center gap-1 border-r pr-3">
+            <Button variant="ghost" size="sm" onClick={() => applyFormat("insertUnorderedList")} title="Bullet List">
               <List className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => applyFormat('insertOrderedList')}
-              className="h-8 w-8 p-0"
-              title="Numbered List"
-            >
+            <Button variant="ghost" size="sm" onClick={() => applyFormat("insertOrderedList")} title="Numbered List">
               <ListOrdered className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={insertCheckbox}
-              className="h-8 w-8 p-0"
-              title="Checkbox"
-            >
+            <Button variant="ghost" size="sm" onClick={insertCheckbox} title="Checkbox">
               <CheckSquare className="h-4 w-4" />
             </Button>
           </div>
 
+          {/* Insert Elements */}
           <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={insertBlockquote}
-              className="h-8 w-8 p-0"
-              title="Quote"
-            >
+            <Button variant="ghost" size="sm" onClick={insertBlockquote} title="Quote">
               <Quote className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={insertLink}
-              className="h-8 w-8 p-0"
-              title="Link (Ctrl+K)"
-            >
+            <Button variant="ghost" size="sm" onClick={insertLink} title="Link (Ctrl+K)">
               <Link className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={insertCodeBlock}
-              className="h-8 w-8 p-0"
-              title="Code Block"
-            >
+            <Button variant="ghost" size="sm" onClick={insertCodeBlock} title="Code Block">
               <Code className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={insertTable}
-              className="h-8 w-8 p-0"
-              title="Table"
-            >
+            <Button variant="ghost" size="sm" onClick={insertTable} title="Table">
               <Table className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={insertHorizontalRule}
-              className="h-8 w-8 p-0"
-              title="Divider"
-            >
+            <Button variant="ghost" size="sm" onClick={insertHorizontalRule} title="Divider">
               <Minus className="h-4 w-4" />
             </Button>
           </div>
         </div>
+      </DialogContent>
+    </Dialog>
+  
+
 
         {/* Slash Command Menu */}
         {showSlashMenu && (

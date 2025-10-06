@@ -676,14 +676,11 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-xs ">
-        <DialogHeader>
-          <DialogTitle>Formatting Tools</DialogTitle>
-        </DialogHeader>
-
+      <DialogContent className="max-w-fit overflow-x-hidden h-60">
+       
         
           {/* Text Styles */}
-          <div className="flex items-center flex-row gap-1 flex-wrap border-r pr-3">
+          <div className="flex  flex-col gap-1 flex-wrap ">
             <Button variant="ghost" size="sm" onClick={() => applyFormat("bold")} title="Bold (Ctrl+B)">
               <Bold className="h-4 w-4" />
               <span>Bold</span>

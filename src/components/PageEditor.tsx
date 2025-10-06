@@ -1,44 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { Page } from '@/services/storage';
-import { 
-  Bold, 
-  Italic, 
-  List, 
-  ListOrdered, 
-  Heading1, 
-  Heading2, 
-  Heading3, 
-  CheckSquare,
-  Smile,
-  Image as ImageIcon,
-  X,
-  Upload,
-  Strikethrough,
-  Code,
-  Quote,
-  Link,
-  Minus,
-  Table,
-  AlignLeft,
-  Plus
-} from 'lucide-react';
+import { Smile,Image as ImageIcon,X, Upload,} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import ToolbarDialog from "@/components/ToolbarDialog";
-
 // Inside your component's return:
-
-
 interface PageEditorProps {
   page: Page & { icon?: string; cover?: string }; // Extend Page to include optional icon and cover
   onUpdate: (page: Page & { icon?: string; cover?: string }) => void;
 }
-
 // 1. Add Icon Modal Component (embedded)
 const AddIconModal: React.FC<{
   isOpen: boolean;
@@ -94,7 +64,6 @@ const AddIconModal: React.FC<{
     </div>
   );
 };
-
 // 2. Add Cover Modal Component (embedded)
 const AddCoverModal: React.FC<{
   isOpen: boolean;
@@ -171,8 +140,6 @@ const AddCoverModal: React.FC<{
     </div>
   );
 };
-
-
 export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   const [title, setTitle] = useState(page.title);
   const [icon, setIcon] = useState(page.icon || '');
@@ -180,15 +147,12 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   const [content, setContent] = useState(page.content);
   const editorRef = useRef<HTMLDivElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
-
-  // Modal states
+// Modal states
   const [showIconModal, setShowIconModal] = useState(false);
   const [showCoverModal, setShowCoverModal] = useState(false);
-  const [showCommentModal, setShowCommentModal] = useState(false);
-
-  // Smart features states
+ // Smart features states
   const [showSlashMenu, setShowSlashMenu] = useState(false);
-  const [slashPosition, setSlashPosition] = useState({ top: 0, left: 0 });
+  const [setSlashPosition] = useState({ top: 0, left: 0 });
   const [showSuggestion, setShowSuggestion] = useState(false);
   const [suggestion, setSuggestion] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
@@ -285,32 +249,71 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   };
 
   const insertTable = () => {
-    const table = `
-      <table class="w-full my-4 border-collapse">
-        <thead>
-          <tr>
-            <th class="border border-muted p-2 bg-muted/50">Header 1</th>
-            <th class="border border-muted p-2 bg-muted/50">Header 2</th>
-            <th class="border border-muted p-2 bg-muted/50">Header 3</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="border border-muted p-2" contenteditable="true">Cell 1</td>
-            <td class="border border-muted p-2" contenteditable="true">Cell 2</td>
-            <td class="border border-muted p-2" contenteditable="true">Cell 3</td>
-          </tr>
-          <tr>
-            <td class="border border-muted p-2" contenteditable="true">Cell 4</td>
-            <td class="border border-muted p-2" contenteditable="true">Cell 5</td>
-            <td class="border border-muted p-2" contenteditable="true">Cell 6</td>
-          </tr>
-        </tbody>
-      </table>
-    `;
-    document.execCommand('insertHTML', false, table);
-    handleContentChange();
-  };
+  const table = `
+    <table class="w-full my-4 border-collapse bg-background rounded-lg overflow-hidden shadow-sm" style="border-spacing: 0;">
+      <thead>
+        <tr class="bg-muted/30">
+          <th class="border-b border-r border-border p-3 text-left font-medium text-sm text-muted-foreground hover:bg-muted/50 transition-colors" contenteditable="true" style="min-width: 150px;">
+            Header 1
+          </th>
+          <th class="border-b border-r border-border p-3 text-left font-medium text-sm text-muted-foreground hover:bg-muted/50 transition-colors" contenteditable="true" style="min-width: 150px;">
+            Header 2
+          </th>
+          <th class="border-b border-border p-3 text-left font-medium text-sm text-muted-foreground hover:bg-muted/50 transition-colors" contenteditable="true" style="min-width: 150px;">
+            Header 3
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="hover:bg-muted/20 transition-colors">
+          <td class="border-b border-r border-border p-3 text-sm" contenteditable="true" data-placeholder="Empty">
+            Cell 1
+          </td>
+          <td class="border-b border-r border-border p-3 text-sm" contenteditable="true" data-placeholder="Empty">
+            Cell 2
+          </td>
+          <td class="border-b border-border p-3 text-sm" contenteditable="true" data-placeholder="Empty">
+            Cell 3
+          </td>
+        </tr>
+        <tr class="hover:bg-muted/20 transition-colors">
+          <td class="border-b border-r border-border p-3 text-sm" contenteditable="true" data-placeholder="Empty">
+            Cell 4
+          </td>
+          <td class="border-b border-r border-border p-3 text-sm" contenteditable="true" data-placeholder="Empty">
+            Cell 5
+          </td>
+          <td class="border-b border-border p-3 text-sm" contenteditable="true" data-placeholder="Empty">
+            Cell 6
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+  
+  document.execCommand('insertHTML', false, table);
+  handleContentChange();
+  
+  // Add placeholder behavior
+  setTimeout(() => {
+    const cells = document.querySelectorAll('td[contenteditable="true"], th[contenteditable="true"]');
+    cells.forEach(cell => {
+      cell.addEventListener('focus', function() {
+        if (this.textContent.trim() === '' || this.textContent === this.dataset.placeholder) {
+          this.textContent = '';
+        }
+      });
+      
+      cell.addEventListener('blur', function() {
+        if (this.textContent.trim() === '' && this.dataset.placeholder) {
+          this.classList.add('text-muted-foreground/40');
+        } else {
+          this.classList.remove('text-muted-foreground/40');
+        }
+      });
+    });
+  }, 100);
+};
 
   const convertMarkdownSyntax = (text: string) => {
     // Auto-convert markdown syntax

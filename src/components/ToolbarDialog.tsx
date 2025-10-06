@@ -32,7 +32,6 @@ import {
   Copy,
   Palette,
   X,
-  Plus,
 } from "lucide-react";
 
 interface ToolbarDialogProps {
@@ -241,13 +240,13 @@ const ToolbarDialog: React.FC<ToolbarDialogProps> = ({
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" className="text-sm">
-        <Plus className="h-5 w-5" />
+          Open Formatting Tools
         </Button>
       </DialogTrigger>
 
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Tools</DialogTitle>
+          <DialogTitle>Formatting Tools</DialogTitle>
         </DialogHeader>
 
         <div className="mt-2 flex flex-wrap items-center gap-2 p-3 bg-card rounded-lg border shadow-sm">

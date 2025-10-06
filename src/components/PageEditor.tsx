@@ -676,14 +676,14 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-xs ">
         <DialogHeader>
           <DialogTitle>Formatting Tools</DialogTitle>
         </DialogHeader>
 
-        <div className="mt-2 flex flex-wrap items-center gap-2 p-3 bg-card rounded-lg border shadow-sm">
+        
           {/* Text Styles */}
-          <div className="flex items-center gap-1 border-r pr-3">
+          <div className="flex items-center flex-row gap-1 flex-wrap border-r pr-3">
             <Button variant="ghost" size="sm" onClick={() => applyFormat("bold")} title="Bold (Ctrl+B)">
               <Bold className="h-4 w-4" />
             </Button>
@@ -696,10 +696,10 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
             <Button variant="ghost" size="sm" onClick={insertInlineCode} title="Inline Code (Ctrl+E)">
               <Code className="h-4 w-4" />
             </Button>
-          </div>
+          
 
           {/* Headings */}
-          <div className="flex items-center gap-1 border-r pr-3">
+          
             <Button variant="ghost" size="sm" onClick={() => applyFormat("formatBlock", "<h1>")} title="Heading 1">
               <Heading1 className="h-4 w-4" />
             </Button>
@@ -709,10 +709,10 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
             <Button variant="ghost" size="sm" onClick={() => applyFormat("formatBlock", "<h3>")} title="Heading 3">
               <Heading3 className="h-4 w-4" />
             </Button>
-          </div>
+       
 
           {/* Lists */}
-          <div className="flex items-center gap-1 border-r pr-3">
+          
             <Button variant="ghost" size="sm" onClick={() => applyFormat("insertUnorderedList")} title="Bullet List">
               <List className="h-4 w-4" />
             </Button>
@@ -722,10 +722,10 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
             <Button variant="ghost" size="sm" onClick={insertCheckbox} title="Checkbox">
               <CheckSquare className="h-4 w-4" />
             </Button>
-          </div>
+          
 
           {/* Insert Elements */}
-          <div className="flex items-center gap-1">
+         
             <Button variant="ghost" size="sm" onClick={insertBlockquote} title="Quote">
               <Quote className="h-4 w-4" />
             </Button>
@@ -741,7 +741,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
             <Button variant="ghost" size="sm" onClick={insertHorizontalRule} title="Divider">
               <Minus className="h-4 w-4" />
             </Button>
-          </div>
+          
         </div>
       </DialogContent>
     </Dialog>

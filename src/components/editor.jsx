@@ -2,15 +2,15 @@ import { useState } from 'react';
 import { TableDialog } from '@/components/TableDialog';
 import { Table } from 'lucide-react';
 
-
-export default function test() {
+export default function editor() {
   const [isTableDialogOpen, setIsTableDialogOpen] = useState(false);
 
-    const handleInsertTable = (tableHTML, config) => {
-      // Insert into your editor
-      // Or if using a ref-based editor:
-      testref.current.innerHTML += tableHTML;
-    };
+  const handleInsertTable = (tableHTML) => {
+    // Insert into your editor
+   
+    // Or if using a ref-based editor:
+     editor.current.innerHTML += tableHTML;
+  };
 
   return (
     <div>

@@ -46,7 +46,7 @@ const TableDialog = ({ isOpen, onClose, onInsert }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-start justify-center pt-20 z-50" onClick={onClose}>
+    <div className="fixed inset-0 flex bg-white items-start justify-center pt-20 z-50" onClick={onClose}>
       <div className="bg-slate-800 rounded-lg shadow-2xl w-full max-w-md border border-slate-700" onClick={(e) => e.stopPropagation()}>
         {/* Header with Search */}
         <div className="px-4 py-3 border-b border-slate-700">

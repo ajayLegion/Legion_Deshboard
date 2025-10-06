@@ -241,7 +241,7 @@ const ToolbarDialog: React.FC<ToolbarDialogProps> = ({
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" className="text-sm">
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="h-4 w-4"/>
         </Button>
       </DialogTrigger>
 

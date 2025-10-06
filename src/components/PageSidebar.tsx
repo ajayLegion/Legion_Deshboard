@@ -6,20 +6,24 @@ import {
   Plus,
   Trash2,
   FileText,
-  Moon,
-  Sun,
   Download,
   Upload,
   Search,
-  Home,
   Settings,
-  UserCircle2,
+  Table,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { DialogContent } from '@radix-ui/react-dialog';
+const navigation = [
+  { name: 'Product', href: '#' },
+  { name: 'Features', href: '#' },
+  { name: 'Marketplace', href: '#' },
+  { name: 'Company', href: '#' },
+]
 interface PageSidebarProps {
   pages: Page[];
   currentPageId: string | null;
@@ -44,7 +48,6 @@ export const PageSidebar = ({
   const [expandedPages, setExpandedPages] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
   const [sidebarWidth, setSidebarWidth] = useState<number>(260);
-
   const sidebarRef = useRef<HTMLDivElement | null>(null);
   const isResizing = useRef(false);
 
@@ -200,6 +203,25 @@ export const PageSidebar = ({
             <Home className="h-4 w-4 mr-2" />
             Home
           </Button>*/}
+           <Dialog>
+      <DialogTrigger asChild>
+         <Button variant="ghost" className="w-full justify-start h-8 px-2 text-sidebar-foreground hover:bg-sidebar-accent text-sm">
+            <Settings className="h-4 w-4 mr-2" />
+            Settings
+          </Button>
+      </DialogTrigger>
+
+      <DialogContent className="max-w-md bg-slate-800 border-slate-700">
+        <Button variant="ghost" size="sm" onClick={onExport} className="flex-1 h-8 text-xs text-sidebar-foreground hover:bg-sidebar-accent">
+            <Download className="h-3 w-3 mr-1" />
+            Export
+          </Button>
+          <Button variant="ghost" size="sm" onClick={onImport} className="flex-1 h-8 text-xs text-sidebar-foreground hover:bg-sidebar-accent">
+            <Upload className="h-3 w-3 mr-1" />
+            Import
+          </Button>
+      </DialogContent>
+    </Dialog>
         </div>
 
         <Separator className="bg-sidebar-border" />
@@ -223,32 +245,8 @@ export const PageSidebar = ({
         </ScrollArea>
 
         {/* Bottom Actions */}
-        <Separator className="bg-sidebar-border" />
-        <div className="p-2 space-y-0.5">
-          
-          <Button variant="ghost" className="w-full justify-start h-8 px-2 text-sidebar-foreground hover:bg-sidebar-accent text-sm">
-            <Settings className="h-4 w-4 mr-2" />
-            Settings
-          </Button>
-        </div>
-
-        <Separator className="bg-sidebar-border" />
-
-        {/* Export / Import */}
-        <div className="p-2 flex gap-1">
-          <Button variant="ghost" size="sm" onClick={onExport} className="flex-1 h-8 text-xs text-sidebar-foreground hover:bg-sidebar-accent">
-            <Download className="h-3 w-3 mr-1" />
-            Export
-          </Button>
-          <Button variant="ghost" size="sm" onClick={onImport} className="flex-1 h-8 text-xs text-sidebar-foreground hover:bg-sidebar-accent">
-            <Upload className="h-3 w-3 mr-1" />
-            Import
-          </Button>
-        </div>
-
-        
+        <Separator className="bg-sidebar-border" />  
       </div>
-
       {/* Resize handle */}
       <div
         onPointerDown={onHandlePointerDown}

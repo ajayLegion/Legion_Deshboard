@@ -6,7 +6,7 @@ import { PageSidebar } from '@/components/PageSidebar';
 import { PageEditor } from '@/components/PageEditor';
 import { exportToMarkdown, downloadMarkdown, parseMarkdownImport } from '@/utils/markdown';
 import { useToast } from '@/hooks/use-toast';
-import { FileText, Moon, Sun, UserCircle2 } from 'lucide-react';
+import { FileText, Moon, Sun } from 'lucide-react';
 
 // ✅ New views
 import Dashboard from '@/components/Dashboard';
@@ -226,11 +226,11 @@ const Index = () => {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <div className="flex justify-center border-b p-3 bg-card shadow-sm z-10">
+      <div className="flex justify-center border-b p-2 bg-card shadow-sm z-10">
       {/* User Profile */}
        
-          <Button variant="ghost" className="w-full justify-start h-auto p-2 text-sidebar-foreground hover:bg-sidebar-accent">
-            <UserCircle2 className="h-6 w-6 mr-2 shrink-0" />
+          <Button variant="ghost" className="w-full justify-start">
+           <img src="/avatar.png" alt="avatar" className=' w-8'/>
             <span className="truncate text-sm font-medium">Legion Notes</span>
           </Button>
         
@@ -259,7 +259,7 @@ const Index = () => {
       <Button
             variant="ghost"
             onClick={handleToggleTheme}
-            className="justify-start h-8 px-2 text-sidebar-foreground hover:bg-sidebar-accent text-sm"
+            className="mx-2 px-4 py-2 rounded  text-sidebar-foreground hover:bg-sidebar-accent text-sm"
           >
             {isDark ? <Sun className="h-4 w-4 mr-2" /> : <Moon className="h-4 w-4 mr-2" />}
             {isDark ? 'Light Mode' : 'Dark Mode'}

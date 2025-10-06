@@ -32,6 +32,7 @@ import {
   Copy,
   Palette,
   X,
+  Plus,
 } from "lucide-react";
 
 interface ToolbarDialogProps {
@@ -226,7 +227,6 @@ const ToolbarDialog: React.FC<ToolbarDialogProps> = ({
   insertBlockquote,
   insertLink,
   insertCodeBlock,
-  insertTable,
   insertHorizontalRule,
 }) => {
   const handleTableInsert = (tableHTML: string) => {
@@ -241,13 +241,13 @@ const ToolbarDialog: React.FC<ToolbarDialogProps> = ({
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" className="text-sm">
-          Open Formatting Tools
+        <Plus className="h-5 w-5" />
         </Button>
       </DialogTrigger>
 
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Formatting Tools</DialogTitle>
+          <DialogTitle>Tools</DialogTitle>
         </DialogHeader>
 
         <div className="mt-2 flex flex-wrap items-center gap-2 p-3 bg-card rounded-lg border shadow-sm">

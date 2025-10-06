@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Page } from '@/services/storage';
-import { Smile,Image as ImageIcon,X, Upload,Table} from 'lucide-react';
+import { Smile,Image as ImageIcon,X, Upload} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ToolbarDialog from "@/components/ToolbarDialog";
@@ -236,7 +236,14 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
     document.execCommand('insertHTML', false, code);
     handleContentChange();
   };
+   const insertTable = () => {
+    const table = `
+      
+    `;
+    
 
+     handleContentChange();
+  };
   const insertBlockquote = () => {
     applyFormat('formatBlock', '<blockquote>');
     editorRef.current?.querySelectorAll('blockquote').forEach((q) => {
@@ -563,7 +570,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   insertBlockquote={insertBlockquote}
   insertLink={insertLink}
   insertCodeBlock={insertCodeBlock}
- 
+  insertTable={insertTable}
   insertHorizontalRule={insertHorizontalRule}
   insertImage={insertImage} 
 />

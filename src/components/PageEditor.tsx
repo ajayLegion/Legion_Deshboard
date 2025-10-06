@@ -29,6 +29,9 @@ import {
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import ToolbarDialog from "@/components/ToolbarDialog";
+
+// Inside your component's return:
 
 
 interface PageEditorProps {
@@ -558,12 +561,6 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
     handleCoverChange(newCover);
   };
 
-  const handleAddComment = (comment: string) => {
-    // Insert a comment block
-    const commentHtml = `<div class="comment bg-muted p-2 rounded my-2 text-sm"><strong>Comment:</strong> ${comment}</div>`;
-    document.execCommand('insertHTML', false, commentHtml);
-    handleContentChange();
-  };
 
   return (
     <div className="flex-1 overflow-auto bg-background">
@@ -598,10 +595,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
             />
           </div>
         )}
-
-       
-
-        {/* Page Icon - Notion-style */}
+     {/* Page Icon - Notion-style */}
         <div
           role="button"
           tabIndex={0}
@@ -622,6 +616,16 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
         </div>
  {/* Action buttons above title - Conditionally render Add icon if no icon */}
         <div className="flex items-center gap-3 mb-4 text-muted-foreground">
+           <ToolbarDialog
+  applyFormat={applyFormat}
+  insertInlineCode={insertInlineCode}
+  insertCheckbox={insertCheckbox}
+  insertBlockquote={insertBlockquote}
+  insertLink={insertLink}
+  insertCodeBlock={insertCodeBlock}
+  insertTable={insertTable}
+  insertHorizontalRule={insertHorizontalRule}
+/>
           {!icon && (
             <Button
               variant="ghost"
@@ -643,7 +647,9 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
               <ImageIcon className="h-4 w-4 mr-1.5" />
               Add cover
             </Button>
+
           )}
+
           
         </div>
         {/* Page Title */}
@@ -668,287 +674,17 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
 
         {/* Formatting Toolbar */}
       
-    <Dialog>
-      <DialogTrigger asChild  className="top-auto left-auto">
-        <Button variant="outline" className="text-sm">
-           <Plus className="h-4 w-4" />
-        </Button>
-      </DialogTrigger>
-
-      <DialogContent className="max-w-fit overflow-x-hidden h-60">
-          {/* Text Styles */}
-          <div className="flex  flex-col  flex-wrap ">
-            <Button variant="ghost" size="sm" onClick={() => applyFormat("bold")} title="Bold (Ctrl+B)">
-              <Bold className="h-4 w-4" />
-              <span>Bold</span>
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => applyFormat("italic")} title="Italic (Ctrl+I)">
-              <Italic className="h-4 w-4" />
-              <span>Italic</span>
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => applyFormat("strikethrough")} title="Strikethrough">
-              <Strikethrough className="h-4 w-4" />
-              <span>Strikethrough</span>
-            </Button>
-            <Button variant="ghost" size="sm" onClick={insertInlineCode} title="Inline Code (Ctrl+E)">
-              <Code className="h-4 w-4" />
-              <span>Inline Code</span>
-            </Button>
-          
-
-          {/* Headings */}
-          
-            <Button variant="ghost" size="sm" onClick={() => applyFormat("formatBlock", "<h1>")} title="Heading 1">
-              <Heading1 className="h-4 w-4" />
-              <span>Heading 1</span>
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => applyFormat("formatBlock", "<h2>")} title="Heading 2">
-              <Heading2 className="h-4 w-4" />
-              <span>Heading 2</span>
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => applyFormat("formatBlock", "<h3>")} title="Heading 3">
-              <Heading3 className="h-4 w-4" />
-              <span>Heading 3</span>
-            </Button>
-       
-
-          {/* Lists */}
-          
-            <Button variant="ghost" size="sm" onClick={() => applyFormat("insertUnorderedList")} title="Bullet List">
-              <List className="h-4 w-4" />
-              <span>Bullet List</span>
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => applyFormat("insertOrderedList")} title="Numbered List">
-              <ListOrdered className="h-4 w-4" />
-              <span>Numbered List</span>
-            </Button>
-            <Button variant="ghost" size="sm" onClick={insertCheckbox} title="Checkbox">
-              <CheckSquare className="h-4 w-4" />
-              <span>Checkbox</span>
-            </Button>
-          
-
-          {/* Insert Elements */}
-         
-            <Button variant="ghost" size="sm" onClick={insertBlockquote} title="Quote">
-              <Quote className="h-4 w-4" /> 
-              <span>Ouote</span>
-            </Button>
-            <Button variant="ghost" size="sm" onClick={insertLink} title="Link (Ctrl+K)">
-              <Link className="h-4 w-4" />
-              <span>Link</span>
-            </Button>
-            <Button variant="ghost" size="sm" onClick={insertCodeBlock} title="Code Block">
-              <Code className="h-4 w-4" />
-              <span>Code Block</span>
-            </Button>
-            <Button variant="ghost" size="sm" onClick={insertTable} title="Table">
-              <Table className="h-4 w-4" />
-              <span>Table</span>
-            </Button>
-            <Button variant="ghost" size="sm" onClick={insertHorizontalRule} title="Divider">
-              <Minus className="h-4 w-4" />
-              <span>Divider</span>
-              </Button>
-          
-        </div>
-      
-    </DialogContent>
-        {/* Slash Command Menu */}
-       
-      
-    </Dialog>
- {showSlashMenu && (
-          <div>
-            <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Basic Blocks</div>
-            <div className="grid grid-cols-2 gap-1 text-sm mb-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-9 justify-start"
-                onClick={() => {
-                  applyFormat('formatBlock', '<h1>');
-                  setShowSlashMenu(false);
-                }}
-              >
-                <Heading1 className="h-4 w-4 mr-2" />
-                Heading 1
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-9 justify-start"
-                onClick={() => {
-                  applyFormat('formatBlock', '<h2>');
-                  setShowSlashMenu(false);
-                }}
-              >
-                <Heading2 className="h-4 w-4 mr-2" />
-                Heading 2
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-9 justify-start"
-                onClick={() => {
-                  applyFormat('formatBlock', '<h3>');
-                  setShowSlashMenu(false);
-                }}
-              >
-                <Heading3 className="h-4 w-4 mr-2" />
-                Heading 3
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-9 justify-start"
-                onClick={() => {
-                  insertBlockquote();
-                  setShowSlashMenu(false);
-                }}
-              >
-                <Quote className="h-4 w-4 mr-2" />
-                Quote
-              </Button>
-            </div>
-
-            <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Lists</div>
-            <div className="grid grid-cols-2 gap-1 text-sm mb-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-9 justify-start"
-                onClick={() => {
-                  applyFormat('insertUnorderedList');
-                  setShowSlashMenu(false);
-                }}
-              >
-                <List className="h-4 w-4 mr-2" />
-                Bullet List
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-9 justify-start"
-                onClick={() => {
-                  applyFormat('insertOrderedList');
-                  setShowSlashMenu(false);
-                }}
-              >
-                <ListOrdered className="h-4 w-4 mr-2" />
-                Numbered List
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-9 justify-start"
-                onClick={() => {
-                  insertCheckbox();
-                  setShowSlashMenu(false);
-                }}
-              >
-                <CheckSquare className="h-4 w-4 mr-2" />
-                To-do List
-              </Button>
-            </div>
-
-            <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Media & Advanced</div>
-            <div className="grid grid-cols-2 gap-1 text-sm mb-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-9 justify-start"
-                onClick={() => {
-                  insertImage();
-                  setShowSlashMenu(false);
-                }}
-              >
-                <ImageIcon className="h-4 w-4 mr-2" />
-                Image
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-9 justify-start"
-                onClick={() => {
-                  insertLink();
-                  setShowSlashMenu(false);
-                }}
-              >
-                <Link className="h-4 w-4 mr-2" />
-                Link
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-9 justify-start"
-                onClick={() => {
-                  insertCodeBlock();
-                  setShowSlashMenu(false);
-                }}
-              >
-                <Code className="h-4 w-4 mr-2" />
-                Code Block
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-9 justify-start"
-                onClick={() => {
-                  insertTable();
-                  setShowSlashMenu(false);
-                }}
-              >
-                <Table className="h-4 w-4 mr-2" />
-                Table
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-9 justify-start"
-                onClick={() => {
-                  insertHorizontalRule();
-                  setShowSlashMenu(false);
-                }}
-              >
-                <Minus className="h-4 w-4 mr-2" />
-                Divider
-              </Button>
-            </div>
-
-            <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">AI</div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-9 justify-start w-full"
-              onClick={() => {
-                triggerAI();
-                setShowSlashMenu(false);
-              }}
-              disabled={aiLoading}
-            >
-              🤖 AI Complete
-            </Button>
-          </div>
-        )}
+       <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">AI</div> <Button variant="ghost" size="sm" className="h-9 justify-start w-full" onClick={() => { triggerAI(); setShowSlashMenu(false); }} disabled={aiLoading} >AI</Button>
+  
         {/* AI Suggestion Instructions (if active) */}
         {showSuggestion && (
           <div className="fixed bottom-4 right-4 bg-muted p-2 rounded-lg text-sm text-muted-foreground z-40">
             Press Enter to accept, Esc to reject
           </div>
         )}
-
         {/* Modals */}
-        <AddIconModal
-          isOpen={showIconModal}
-          onClose={() => setShowIconModal(false)}
-          onSelectIcon={handleAddIcon}
-        />
-        <AddCoverModal
-          isOpen={showCoverModal}
-          onClose={() => setShowCoverModal(false)}
-          onAddCover={handleAddCover}
-        />
+        <AddIconModal isOpen={showIconModal} onClose={() => setShowIconModal(false)} onSelectIcon={handleAddIcon} />
+        <AddCoverModal isOpen={showCoverModal} onClose={() => setShowCoverModal(false)} onAddCover={handleAddCover} />
       </div>
     </div>
   );

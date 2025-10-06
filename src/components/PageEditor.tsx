@@ -19,7 +19,8 @@ import {
   Link,
   Minus,
   Table,
-  AlignLeft
+  AlignLeft,
+  Plus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -672,13 +673,11 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" className="text-sm">
-          Open Formatting Tools
+           <Plus className="h-4 w-4" />
         </Button>
       </DialogTrigger>
 
       <DialogContent className="max-w-fit overflow-x-hidden h-60">
-       
-        
           {/* Text Styles */}
           <div className="flex  flex-col gap-1 flex-wrap ">
             <Button variant="ghost" size="sm" onClick={() => applyFormat("bold")} title="Bold (Ctrl+B)">

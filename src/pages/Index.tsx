@@ -11,7 +11,6 @@ import { FileText, Moon, Sun, UserCircle2 } from 'lucide-react';
 // ✅ New views
 import Dashboard from '@/components/Dashboard';
 import WorkflowPage from '@/components/WorkflowPage';
-import Editor from '@/components/Editor';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
@@ -21,7 +20,7 @@ const Index = () => {
   const [isDark, setIsDark] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<'notes' | 'dashboard' | 'workflow' | 'Editor'>('notes'); // ✅ View state
+  const [view, setView] = useState<'notes' | 'dashboard' | 'workflow'>('notes'); // ✅ View state
   const { toast } = useToast();
 
   useEffect(() => {
@@ -256,12 +255,7 @@ const Index = () => {
         >
           Workflow
         </button>
-         <button
-          className={`mx-2 px-4 py-2 rounded text-sm font-medium ${view === 'Editor' ? 'bg-muted text-primary' : 'hover:bg-accent'}`}
-          onClick={() => setView('Editor')}
-        >
-          Editor  
-        </button>
+        {/* Theme Toggle */}
       <Button
             variant="ghost"
             onClick={handleToggleTheme}

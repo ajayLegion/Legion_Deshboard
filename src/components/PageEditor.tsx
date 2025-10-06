@@ -671,7 +671,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
         {/* Formatting Toolbar */}
       
     <Dialog>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild id="formatting-toolbar" className="top-auto left-auto">
         <Button variant="outline" className="text-sm">
            <Plus className="h-4 w-4" />
         </Button>
@@ -757,8 +757,6 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
       </DialogContent>
     </Dialog>
   
-
-
         {/* Slash Command Menu */}
         {showSlashMenu && (
           <div

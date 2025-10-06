@@ -1,7 +1,4 @@
-// IndexedDB wrapper for local storage
-const DB_NAME = 'NotionCloneDB';
-const DB_VERSION = 1;
-const PAGES_STORE = 'pages';
+import { supabase } from "@/integrations/supabase/client";
 
 export interface Page {
   id: string;
@@ -14,90 +11,83 @@ export interface Page {
 }
 
 class StorageService {
-  private db: IDBDatabase | null = null;
-
-  async init(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => {
-        this.db = request.result;
-        resolve();
-      };
-
-      request.onupgradeneeded = (event) => {
-        const db = (event.target as IDBOpenDBRequest).result;
-        
-        if (!db.objectStoreNames.contains(PAGES_STORE)) {
-          const store = db.createObjectStore(PAGES_STORE, { keyPath: 'id' });
-          store.createIndex('parentId', 'parentId', { unique: false });
-          store.createIndex('order', 'order', { unique: false });
-        }
-      };
-    });
-  }
-
   async getAllPages(): Promise<Page[]> {
-    if (!this.db) await this.init();
-    
-    return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(PAGES_STORE, 'readonly');
-      const store = transaction.objectStore(PAGES_STORE);
-      const request = store.getAll();
+    const { data, error } = await supabase
+      .from('pages')
+      .select('*')
+      .order('order_index', { ascending: true });
 
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
+    if (error) throw error;
+
+    return (data || []).map(this.mapFromDb);
   }
 
   async getPage(id: string): Promise<Page | undefined> {
-    if (!this.db) await this.init();
-    
-    return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(PAGES_STORE, 'readonly');
-      const store = transaction.objectStore(PAGES_STORE);
-      const request = store.get(id);
+    const { data, error } = await supabase
+      .from('pages')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
+    if (error) {
+      if (error.code === 'PGRST116') return undefined;
+      throw error;
+    }
+
+    return data ? this.mapFromDb(data) : undefined;
   }
 
   async savePage(page: Page): Promise<void> {
-    if (!this.db) await this.init();
-    
-    return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(PAGES_STORE, 'readwrite');
-      const store = transaction.objectStore(PAGES_STORE);
-      const request = store.put(page);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
 
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
+    const dbPage = {
+      id: page.id,
+      user_id: user.id,
+      title: page.title,
+      content: page.content,
+      parent_id: page.parentId,
+      order_index: page.order,
+    };
+
+    const { error } = await supabase
+      .from('pages')
+      .upsert(dbPage);
+
+    if (error) throw error;
   }
 
   async deletePage(id: string): Promise<void> {
-    if (!this.db) await this.init();
-    
-    return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(PAGES_STORE, 'readwrite');
-      const store = transaction.objectStore(PAGES_STORE);
-      const request = store.delete(id);
+    const { error } = await supabase
+      .from('pages')
+      .delete()
+      .eq('id', id);
 
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
+    if (error) throw error;
   }
 
   async searchPages(query: string): Promise<Page[]> {
-    const pages = await this.getAllPages();
-    const lowerQuery = query.toLowerCase();
-    
-    return pages.filter(page => 
-      page.title.toLowerCase().includes(lowerQuery) ||
-      page.content.toLowerCase().includes(lowerQuery)
-    );
+    const { data, error } = await supabase
+      .from('pages')
+      .select('*')
+      .or(`title.ilike.%${query}%,content.ilike.%${query}%`)
+      .order('order_index', { ascending: true });
+
+    if (error) throw error;
+
+    return (data || []).map(this.mapFromDb);
+  }
+
+  private mapFromDb(data: any): Page {
+    return {
+      id: data.id,
+      title: data.title,
+      content: data.content || '',
+      parentId: data.parent_id,
+      createdAt: new Date(data.created_at).getTime(),
+      updatedAt: new Date(data.updated_at).getTime(),
+      order: data.order_index,
+    };
   }
 }
 

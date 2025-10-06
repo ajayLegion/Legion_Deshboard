@@ -311,7 +311,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
     const span = editorRef.current?.querySelector('.suggestion-text');
     if (span) {
       span.classList.remove('suggestion-text', 'text-gray-400', 'italic');
-      span.contentEditable = 'true';
+      (span as HTMLElement).contentEditable = 'true';
       // Make it selectable
       const range = document.createRange();
       range.selectNodeContents(span);

@@ -49,7 +49,6 @@ const Index = () => {
     if (!isAuthenticated) return;
 
     const initStorage = async () => {
-      await storage.init();
       const loadedPages = await storage.getAllPages();
 
       if (loadedPages.length === 0) {

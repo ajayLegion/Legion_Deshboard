@@ -686,15 +686,19 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
           <div className="flex items-center flex-row gap-1 flex-wrap border-r pr-3">
             <Button variant="ghost" size="sm" onClick={() => applyFormat("bold")} title="Bold (Ctrl+B)">
               <Bold className="h-4 w-4" />
+              <span>Bold</span>
             </Button>
             <Button variant="ghost" size="sm" onClick={() => applyFormat("italic")} title="Italic (Ctrl+I)">
               <Italic className="h-4 w-4" />
+              <span>Italic</span>
             </Button>
             <Button variant="ghost" size="sm" onClick={() => applyFormat("strikethrough")} title="Strikethrough">
               <Strikethrough className="h-4 w-4" />
+              <span>Strikethrough</span>
             </Button>
             <Button variant="ghost" size="sm" onClick={insertInlineCode} title="Inline Code (Ctrl+E)">
               <Code className="h-4 w-4" />
+              <span>Inline Code</span>
             </Button>
           
 
@@ -702,12 +706,15 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
           
             <Button variant="ghost" size="sm" onClick={() => applyFormat("formatBlock", "<h1>")} title="Heading 1">
               <Heading1 className="h-4 w-4" />
+              <span>Heading 1</span>
             </Button>
             <Button variant="ghost" size="sm" onClick={() => applyFormat("formatBlock", "<h2>")} title="Heading 2">
               <Heading2 className="h-4 w-4" />
+              <span>Heading 2</span>
             </Button>
             <Button variant="ghost" size="sm" onClick={() => applyFormat("formatBlock", "<h3>")} title="Heading 3">
               <Heading3 className="h-4 w-4" />
+              <span>Heading 3</span>
             </Button>
        
 
@@ -715,32 +722,40 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
           
             <Button variant="ghost" size="sm" onClick={() => applyFormat("insertUnorderedList")} title="Bullet List">
               <List className="h-4 w-4" />
+              <span>Bullet List</span>
             </Button>
             <Button variant="ghost" size="sm" onClick={() => applyFormat("insertOrderedList")} title="Numbered List">
               <ListOrdered className="h-4 w-4" />
+              <span>Numbered List</span>
             </Button>
             <Button variant="ghost" size="sm" onClick={insertCheckbox} title="Checkbox">
               <CheckSquare className="h-4 w-4" />
+              <span>Checkbox</span>
             </Button>
           
 
           {/* Insert Elements */}
          
             <Button variant="ghost" size="sm" onClick={insertBlockquote} title="Quote">
-              <Quote className="h-4 w-4" />
+              <Quote className="h-4 w-4" /> 
+              <span>Ouote</span>
             </Button>
             <Button variant="ghost" size="sm" onClick={insertLink} title="Link (Ctrl+K)">
               <Link className="h-4 w-4" />
+              <span>Link</span>
             </Button>
             <Button variant="ghost" size="sm" onClick={insertCodeBlock} title="Code Block">
               <Code className="h-4 w-4" />
+              <span>Code Block</span>
             </Button>
             <Button variant="ghost" size="sm" onClick={insertTable} title="Table">
               <Table className="h-4 w-4" />
+              <span>Table</span>
             </Button>
             <Button variant="ghost" size="sm" onClick={insertHorizontalRule} title="Divider">
               <Minus className="h-4 w-4" />
-            </Button>
+              <span>Divider</span>
+              </Button>
           
         </div>
       </DialogContent>

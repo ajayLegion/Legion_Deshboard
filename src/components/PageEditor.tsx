@@ -236,8 +236,9 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
     document.execCommand('insertHTML', false, code);
     handleContentChange();
   };
-   const insertTable = () => {
-    const table = `
+   const insertTable = (tableHTML?: string) => {
+    editorRef.current?.focus();
+    const table = tableHTML || `
       <table class="border-collapse border border-border my-4 w-full">
         <thead>
           <tr>

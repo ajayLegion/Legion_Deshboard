@@ -42,7 +42,7 @@ interface ToolbarDialogProps {
   insertBlockquote: () => void;
   insertLink: () => void;
   insertCodeBlock: () => void;
-  insertTable: () => void;
+  insertTable: (html: string) => void;
   insertHorizontalRule: () => void;
 }
 
@@ -227,14 +227,11 @@ const ToolbarDialog: React.FC<ToolbarDialogProps> = ({
   insertBlockquote,
   insertLink,
   insertCodeBlock,
+  insertTable,
   insertHorizontalRule,
 }) => {
   const handleTableInsert = (tableHTML: string) => {
-    // Insert the table HTML using your existing insertTable function
-    // or use document.execCommand directly
-    document.execCommand('insertHTML', false, tableHTML);
-    // Alternatively, call your insertTable function if it needs the HTML
-    // insertTable(tableHTML);
+    insertTable(tableHTML);
   };
 
   return (

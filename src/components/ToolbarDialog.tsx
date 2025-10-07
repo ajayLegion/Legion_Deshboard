@@ -73,7 +73,7 @@ const TableDialog: React.FC<{ onInsert: (html: string) => void }> = ({ onInsert 
         <tr class="${selectedColor}">
           ${Array(cols).fill(0).map((_, i) => `
           <th class="border-b border-r border-border p-3 text-left font-medium text-sm ${hoverColor} transition-colors last:border-r-0" contenteditable="true" style="min-width: 150px;">
-            Header ${i + 1}
+            
           </th>
           `).join('')}
         </tr>
@@ -84,7 +84,7 @@ const TableDialog: React.FC<{ onInsert: (html: string) => void }> = ({ onInsert 
       <tr class="hover:bg-muted/20 transition-colors">
         ${Array(cols).fill(0).map((_, colIdx) => `
         <td class="border-b border-r border-border p-3 text-sm last:border-r-0" contenteditable="true">
-          Cell ${rowIdx * cols + colIdx + 1}
+         
         </td>
         `).join('')}
       </tr>
@@ -278,8 +278,8 @@ const ToolbarDialog: React.FC<ToolbarDialogProps> = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="text-sm">
-          <Plus className="h-4 w-4"/>
+        <Button variant="outline" className="w-8 h-8 ">
+          <Plus className="h-2 w-2" />
         </Button>
       </DialogTrigger>
 

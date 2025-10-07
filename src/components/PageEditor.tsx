@@ -159,11 +159,10 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   const [suggestion, setSuggestion] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
   
-  // Hover toolbar states
-  const [showHoverToolbar, setShowHoverToolbar] = useState(false);
-  const [hoverToolbarPosition, setHoverToolbarPosition] = useState({ top: 0, left: 0 });
-  const [hoveredElement, setHoveredElement] = useState<HTMLElement | null>(null);
-   
+  const [showToolbar, setShowToolbar] = useState(false);
+  const [toolbarPosition, setToolbarPosition] = useState({ top: 0, left: 0 });
+  const [targetBlock, setTargetBlock] = useState<HTMLElement | null>(null);
+ 
 
   useEffect(() => {
     setTitle(page.title);
@@ -246,21 +245,21 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
       <table class="border-collapse border border-border my-4 w-full">
         <thead>
           <tr>
-            <th class="border border-border px-4 py-2 bg-muted">Header 1</th>
-            <th class="border border-border px-4 py-2 bg-muted">Header 2</th>
-            <th class="border border-border px-4 py-2 bg-muted">Header 3</th>
+            <th class="border border-border px-4 py-2 bg-muted"></th>
+            <th class="border border-border px-4 py-2 bg-muted"></th>
+            <th class="border border-border px-4 py-2 bg-muted"></th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td class="border border-border px-4 py-2">Cell 1</td>
-            <td class="border border-border px-4 py-2">Cell 2</td>
+            <td class="border border-border px-4 py-2"></td>
+            <td class="border border-border px-4 py-2"></td>
             <td class="border border-border px-4 py-2">Cell 3</td>
           </tr>
           <tr>
-            <td class="border border-border px-4 py-2">Cell 4</td>
-            <td class="border border-border px-4 py-2">Cell 5</td>
-            <td class="border border-border px-4 py-2">Cell 6</td>
+            <td class="border border-border px-4 py-2"></td>
+            <td class="border border-border px-4 py-2"></td>
+            <td class="border border-border px-4 py-2"></td>
           </tr>
         </tbody>
       </table>
@@ -515,63 +514,56 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
     }
   };
 
+    // Hide all menus
   const hideMenus = () => {
-    setShowSlashMenu(false);
-    if (showSuggestion) rejectSuggestion();
+    setShowToolbar(false);
   };
 
-  // Handle mouse move to show hover toolbar
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  // Handle right-click (context menu)
+  const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault(); // prevent default browser menu
     if (!editorRef.current) return;
-    
-    const target = e.target as HTMLElement;
-    
-    // Only show toolbar if hovering over content blocks, not the editor container itself
-    if (target === editorRef.current) {
-      setShowHoverToolbar(false);
-      return;
-    }
-    
-    // Find the closest block-level element
-    let blockElement = target;
-    while (blockElement && blockElement !== editorRef.current) {
-      const display = window.getComputedStyle(blockElement).display;
-      if (display === 'block' || blockElement.tagName === 'DIV' || blockElement.tagName === 'P' || 
-          blockElement.tagName === 'H1' || blockElement.tagName === 'H2' || blockElement.tagName === 'H3' ||
-          blockElement.tagName === 'LI' || blockElement.tagName === 'TABLE') {
-        break;
-      }
+
+    let blockElement = e.target as HTMLElement;
+
+    // Find nearest block element
+    while (
+      blockElement &&
+      blockElement !== editorRef.current &&
+      !["DIV", "P", "H1", "H2", "H3", "LI", "TABLE"].includes(
+        blockElement.tagName
+      )
+    ) {
       blockElement = blockElement.parentElement as HTMLElement;
     }
-    
+
     if (blockElement && blockElement !== editorRef.current) {
       const rect = blockElement.getBoundingClientRect();
       const editorRect = editorRef.current.getBoundingClientRect();
-      
-      setHoveredElement(blockElement);
-      setHoverToolbarPosition({
-        top: rect.top - editorRect.top,
-        left: -48 // Position to the left of the content
-      });
-      setShowHoverToolbar(true);
+
+      setTargetBlock(blockElement);
+      setToolbarPosition({
+  top: e.clientY - editorRect.top + 8,
+  left: e.clientX - editorRect.left + 8,
+});
+
+      setShowToolbar(true);
     }
   };
 
-  const handleMouseLeave = () => {
-    setShowHoverToolbar(false);
-    setHoveredElement(null);
-  };
-
+  // Hide when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (editorRef.current && !editorRef.current.contains(e.target as Node)) {
+      if (
+        editorRef.current &&
+        !editorRef.current.contains(e.target as Node)
+      ) {
         hideMenus();
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
   // Modal handlers
   const handleAddIcon = (newIcon: string) => {
     handleIconChange(newIcon);
@@ -636,6 +628,16 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
         </div>
  {/* Action buttons above title - Conditionally render Add icon if no icon */}
         <div className="flex items-center gap-3 mb-4 text-muted-foreground">
+           <ToolbarDialog
+            applyFormat={applyFormat}
+            insertInlineCode={insertInlineCode}
+            insertCheckbox={insertCheckbox}
+            insertBlockquote={insertBlockquote}
+            insertLink={insertLink}
+            insertCodeBlock={insertCodeBlock}
+            insertTable={insertTable}
+            insertHorizontalRule={insertHorizontalRule}
+          />
           {!icon && (
             <Button
               variant="ghost"
@@ -677,33 +679,32 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
           contentEditable
           onInput={handleContentChange}
           onKeyDown={handleKeyDown}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          className="editor-content min-h-[500px] outline-none text-base leading-relaxed relative"
+          onContextMenu={handleContextMenu}
+         className="editor-content min-h-[500px] outline-none text-base leading-relaxed relative"
           data-placeholder="Type '/' for commands, or use markdown: **bold**, *italic*, `code`, ~~strikethrough~~"
           suppressContentEditableWarning
         >
-          {/* Hover Toolbar Trigger */}
-          {showHoverToolbar && (
-            <div
-              className="absolute z-50"
-              style={{
-                top: `${hoverToolbarPosition.top}px`,
-                left: `${hoverToolbarPosition.left}px`,
-              }}
-            >
-              <ToolbarDialog
-                applyFormat={applyFormat}
-                insertInlineCode={insertInlineCode}
-                insertCheckbox={insertCheckbox}
-                insertBlockquote={insertBlockquote}
-                insertLink={insertLink}
-                insertCodeBlock={insertCodeBlock}
-                insertTable={insertTable}
-                insertHorizontalRule={insertHorizontalRule}
-              />
-            </div>
-          )}
+                {/* Toolbar on right-click */}
+      {showToolbar && (
+        <div
+          className="absolute z-50 hover-toolbar"
+          style={{
+            top: `${toolbarPosition.top}px`,
+            left: `${toolbarPosition.left}px`,
+          }}
+        >
+          <ToolbarDialog
+            applyFormat={applyFormat}
+            insertInlineCode={insertInlineCode}
+            insertCheckbox={insertCheckbox}
+            insertBlockquote={insertBlockquote}
+            insertLink={insertLink}
+            insertCodeBlock={insertCodeBlock}
+            insertTable={insertTable}
+            insertHorizontalRule={insertHorizontalRule}
+          />
+        </div>
+      )}
         </div>
 
         {/* Formatting Toolbar */}

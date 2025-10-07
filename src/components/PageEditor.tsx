@@ -154,7 +154,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   const [showCoverModal, setShowCoverModal] = useState(false);
  // Smart features states
   const [showSlashMenu, setShowSlashMenu] = useState(false);
-  const [setSlashPosition] = useState({ top: 0, left: 0 });
+  const [slashPosition, setSlashPosition] = useState({ top: 0, left: 0 });
   const [showSuggestion, setShowSuggestion] = useState(false);
   const [suggestion, setSuggestion] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
@@ -238,11 +238,30 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   };
    const insertTable = () => {
     const table = `
-      
+      <table class="border-collapse border border-border my-4 w-full">
+        <thead>
+          <tr>
+            <th class="border border-border px-4 py-2 bg-muted">Header 1</th>
+            <th class="border border-border px-4 py-2 bg-muted">Header 2</th>
+            <th class="border border-border px-4 py-2 bg-muted">Header 3</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="border border-border px-4 py-2">Cell 1</td>
+            <td class="border border-border px-4 py-2">Cell 2</td>
+            <td class="border border-border px-4 py-2">Cell 3</td>
+          </tr>
+          <tr>
+            <td class="border border-border px-4 py-2">Cell 4</td>
+            <td class="border border-border px-4 py-2">Cell 5</td>
+            <td class="border border-border px-4 py-2">Cell 6</td>
+          </tr>
+        </tbody>
+      </table>
     `;
-    
-
-     handleContentChange();
+    document.execCommand('insertHTML', false, table);
+    handleContentChange();
   };
   const insertBlockquote = () => {
     applyFormat('formatBlock', '<blockquote>');
@@ -572,7 +591,6 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
   insertCodeBlock={insertCodeBlock}
   insertTable={insertTable}
   insertHorizontalRule={insertHorizontalRule}
-  insertImage={insertImage} 
 />
 
           {!icon && (

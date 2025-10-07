@@ -52,13 +52,27 @@ const TableDialog: React.FC<{ onInsert: (html: string) => void }> = ({ onInsert 
   const [hasHeaderRow, setHasHeaderRow] = useState(true);
   const [rows, setRows] = useState(3);
   const [cols, setCols] = useState(5);
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [selectedColor, setSelectedColor] = useState("bg-muted/30");
+  
+  const colorOptions = [
+    { name: "Default", value: "bg-muted/30", hover: "hover:bg-muted/50" },
+    { name: "Blue", value: "bg-blue-500/20", hover: "hover:bg-blue-500/30" },
+    { name: "Green", value: "bg-green-500/20", hover: "hover:bg-green-500/30" },
+    { name: "Purple", value: "bg-purple-500/20", hover: "hover:bg-purple-500/30" },
+    { name: "Red", value: "bg-red-500/20", hover: "hover:bg-red-500/30" },
+    { name: "Yellow", value: "bg-yellow-500/20", hover: "hover:bg-yellow-500/30" },
+  ];
 
   const handleInsert = () => {
+    const selectedColorOption = colorOptions.find(c => c.value === selectedColor);
+    const hoverColor = selectedColorOption?.hover || "hover:bg-muted/50";
+    
     const headerRow = hasHeaderRow ? `
       <thead>
-        <tr class="bg-muted/30">
+        <tr class="${selectedColor}">
           ${Array(cols).fill(0).map((_, i) => `
-          <th class="border-b border-r border-border p-3 text-left font-medium text-sm hover:bg-muted/50 transition-colors last:border-r-0" contenteditable="true" style="min-width: 150px;">
+          <th class="border-b border-r border-border p-3 text-left font-medium text-sm ${hoverColor} transition-colors last:border-r-0" contenteditable="true" style="min-width: 150px;">
             Header ${i + 1}
           </th>
           `).join('')}
@@ -126,13 +140,37 @@ const TableDialog: React.FC<{ onInsert: (html: string) => void }> = ({ onInsert 
           </div>
 
           {/* Color */}
-          <div className="flex items-center justify-between px-4 py-2 hover:bg-slate-700 rounded cursor-pointer group transition-colors">
+          <div 
+            className="flex items-center justify-between px-4 py-2 hover:bg-slate-700 rounded cursor-pointer group transition-colors"
+            onClick={() => setShowColorPicker(!showColorPicker)}
+          >
             <div className="flex items-center gap-3">
               <Palette className="w-4 h-4 text-slate-400 group-hover:text-slate-300" />
               <span className="text-sm text-white">Color</span>
             </div>
-            <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-slate-300" />
+            <ChevronDown className={`w-4 h-4 text-slate-400 group-hover:text-slate-300 transition-transform ${showColorPicker ? 'rotate-180' : ''}`} />
           </div>
+          
+          {/* Color Picker Dropdown */}
+          {showColorPicker && (
+            <div className="px-4 py-2 space-y-1">
+              {colorOptions.map((color) => (
+                <div
+                  key={color.value}
+                  className={`flex items-center gap-3 px-3 py-2 rounded cursor-pointer transition-colors ${
+                    selectedColor === color.value ? 'bg-slate-600' : 'hover:bg-slate-700'
+                  }`}
+                  onClick={() => {
+                    setSelectedColor(color.value);
+                    setShowColorPicker(false);
+                  }}
+                >
+                  <div className={`w-4 h-4 rounded ${color.value} border border-slate-600`} />
+                  <span className="text-sm text-white">{color.name}</span>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Insert Above */}
           <div className="flex items-center gap-3 px-4 py-2 hover:bg-slate-700 rounded cursor-pointer group transition-colors">

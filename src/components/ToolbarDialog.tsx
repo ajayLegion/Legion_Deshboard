@@ -85,8 +85,11 @@ const TableDialog: React.FC<{ onInsert: (html: string) => void }> = ({ onInsert 
       </table>
     `;
     
-    onInsert(table);
+    // Close dialog first, then insert after a brief delay
     setIsOpen(false);
+    setTimeout(() => {
+      onInsert(table);
+    }, 100);
   };
 
   return (

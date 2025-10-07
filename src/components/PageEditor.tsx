@@ -237,7 +237,6 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
     handleContentChange();
   };
    const insertTable = (tableHTML?: string) => {
-    editorRef.current?.focus();
     const table = tableHTML || `
       <table class="border-collapse border border-border my-4 w-full">
         <thead>
@@ -261,8 +260,15 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
         </tbody>
       </table>
     `;
-    document.execCommand('insertHTML', false, table);
-    handleContentChange();
+    
+    if (editorRef.current) {
+      editorRef.current.focus();
+      // Ensure focus is established before inserting
+      requestAnimationFrame(() => {
+        document.execCommand('insertHTML', false, table);
+        handleContentChange();
+      });
+    }
   };
   const insertBlockquote = () => {
     applyFormat('formatBlock', '<blockquote>');

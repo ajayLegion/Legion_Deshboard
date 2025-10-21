@@ -248,12 +248,6 @@ const Index = () => {
         >
           Dashboard
         </button>
-        <button
-          className={`mx-2 px-4 py-2 rounded text-sm font-medium ${view === 'workflow' ? 'bg-muted text-primary' : 'hover:bg-accent'}`}
-          onClick={() => setView('workflow')}
-        >
-          Workflow
-        </button>
         {/* Theme Toggle */}
       <Button
             variant="ghost"

@@ -67,15 +67,29 @@ class StorageService {
   }
 
   async searchPages(query: string): Promise<Page[]> {
+    // Sanitize search input to prevent SQL injection
+    const sanitizedQuery = this.sanitizeSearchInput(query);
+    
     const { data, error } = await supabase
       .from('pages')
       .select('*')
-      .or(`title.ilike.%${query}%,content.ilike.%${query}%`)
+      .or(`title.ilike.%${sanitizedQuery}%,content.ilike.%${sanitizedQuery}%`)
       .order('order_index', { ascending: true });
 
     if (error) throw error;
 
     return (data || []).map(this.mapFromDb);
+  }
+
+  private sanitizeSearchInput(input: string): string {
+    // Escape special characters that have meaning in PostgreSQL LIKE patterns
+    // % = matches any sequence of characters
+    // _ = matches any single character
+    // \ = escape character
+    return input
+      .replace(/\\/g, '\\\\')  // Escape backslashes first
+      .replace(/%/g, '\\%')     // Escape percent signs
+      .replace(/_/g, '\\_');    // Escape underscores
   }
 
   private mapFromDb(data: any): Page {

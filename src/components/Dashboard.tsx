@@ -15,47 +15,81 @@ const Dashboard: React.FC = () => {
   const [quote, setQuote] = useState("");
   const [balance, setBalance] = useState("₹0.00");
   const [lastUpdated, setLastUpdated] = useState("");
-  const [links, setLinks] = useState<Array<{href: string, title: string, icon: string}>>([]);
+  const [links, setLinks] = useState<Array<{ href: string; title: string; icon: string }>>([]);
   const [engine, setEngine] = useState({
     url: "https://www.google.com/search?q=",
     icon: "https://www.google.com/favicon.ico",
   });
   const [query, setQuery] = useState("");
 
-  // Theme setup
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  // Check authentication and load dashboard settings
-  useEffect(() => {
-    const loadDashboardSettings = async (uid: string) => {
+  // Load dashboard settings from database
+  const loadDashboardSettings = async (uid: string) => {
+    try {
       const { data, error } = await supabase
         .from('dashboard_settings')
         .select('*')
         .eq('user_id', uid)
         .maybeSingle();
 
-      if (error) {
-        console.error('Error loading dashboard settings:', error);
-        return;
-      }
+      if (error) throw error;
 
       if (data) {
-        setTheme(data.theme as 'light' | 'dark');
+        setTheme((data.theme as 'light' | 'dark') || 'light');
         setGoal(data.daily_goal || "");
         setQuote(data.daily_quote || "");
         setBalance(data.balance || "₹0.00");
         setLastUpdated(data.last_updated || "");
-        setLinks((data.quick_links as Array<{href: string, title: string, icon: string}>) || []);
-        setEngine((data.search_engine as {url: string, icon: string}) || {
-          url: "https://www.google.com/search?q=",
-          icon: "https://www.google.com/favicon.ico",
-        });
+        setLinks((data.quick_links as Array<{ href: string; title: string; icon: string }>) || []);
+        setEngine((data.search_engine as { url: string; icon: string }) || { url: "https://www.google.com/search?q=", icon: "https://www.google.com/favicon.ico" });
+      } else {
+        // Create default settings if none exist
+        const { error: insertError } = await supabase
+          .from('dashboard_settings')
+          .insert({
+            user_id: uid,
+            theme: 'light',
+            balance: '₹0.00',
+            quick_links: [],
+            search_engine: { url: "https://www.google.com/search?q=", icon: "https://www.google.com/favicon.ico" }
+          });
+        if (insertError) console.error('Error creating dashboard settings:', insertError);
       }
-    };
+    } catch (error) {
+      console.error('Error loading dashboard settings:', error);
+    }
+  };
 
+  // Save dashboard settings to database
+  const saveDashboardSettings = async () => {
+    if (!userId) return;
+    
+    try {
+      const { error } = await supabase
+        .from('dashboard_settings')
+        .upsert({
+          user_id: userId,
+          daily_goal: goal,
+          daily_quote: quote,
+          balance,
+          last_updated: lastUpdated,
+          quick_links: links,
+          search_engine: engine,
+          theme
+        });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error saving dashboard settings:', error);
+    }
+  };
+
+  // Theme setup
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }, [theme]);
+
+  // Check authentication and load settings
+  useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) {
         navigate('/login');
@@ -103,31 +137,15 @@ const Dashboard: React.FC = () => {
     return () => clearInterval(interval);
   }, [isAuthenticated]);
 
-
-
-  // Database sync - save settings to database when they change
+  // Auto-save to database when settings change
   useEffect(() => {
-    if (!userId || !isAuthenticated) return;
-    
-    const saveSettings = async () => {
-      await supabase
-        .from('dashboard_settings')
-        .upsert({
-          user_id: userId,
-          daily_goal: goal,
-          daily_quote: quote,
-          balance: balance,
-          last_updated: lastUpdated,
-          quick_links: links,
-          search_engine: engine,
-          theme: theme,
-        });
-    };
-
-    // Debounce save to avoid too many writes
-    const timeoutId = setTimeout(saveSettings, 500);
-    return () => clearTimeout(timeoutId);
-  }, [userId, isAuthenticated, goal, quote, balance, lastUpdated, links, engine, theme]);
+    if (isAuthenticated && userId) {
+      const timeoutId = setTimeout(() => {
+        saveDashboardSettings();
+      }, 1000); // Debounce saves by 1 second
+      return () => clearTimeout(timeoutId);
+    }
+  }, [goal, quote, balance, lastUpdated, links, engine, theme, isAuthenticated, userId]);
   
 
   const doSearch = () => {

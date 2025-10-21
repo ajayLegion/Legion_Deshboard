@@ -84,7 +84,7 @@ const Login = () => {
             
           </div>
           <h2 className="mt-6 text-3xl font-bold">
-            <img src="public/avatar.png" alt="avatar" />
+            <img src="/public/avatar.png" alt="avatar" />
             {isSignUp ? "Create Account" : "Welcome Legion"}
           </h2>
         </div>

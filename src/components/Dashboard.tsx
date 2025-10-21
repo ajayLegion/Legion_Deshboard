@@ -327,7 +327,7 @@ const Dashboard: React.FC = () => {
         <div className="relative group">
           <div className="absolute -inset-4 bg-gradient-to-r from-white via-gray-200 to-white rounded-full opacity-10 blur-xl group-hover:opacity-20 transition-opacity duration-500"></div>
           <img
-            src="/legion.png"
+            src="public/avatar.png"
             alt="Ajay Legion Logo"
             className="w-64 h-auto relative z-10 drop-shadow-2xl transform group-hover:scale-105 transition-transform duration-300"
           />

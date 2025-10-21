@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Lock } from "lucide-react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -85,6 +84,7 @@ const Login = () => {
             
           </div>
           <h2 className="mt-6 text-3xl font-bold">
+            <img src="public/avatar.png" alt="avatar" />
             {isSignUp ? "Create Account" : "Welcome Legion"}
           </h2>
         </div>

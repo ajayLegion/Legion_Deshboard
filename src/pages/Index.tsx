@@ -10,7 +10,6 @@ import { FileText, Moon, Sun } from 'lucide-react';
 
 // ✅ New views
 import Dashboard from '@/components/Dashboard';
-import WorkflowPage from '@/components/WorkflowPage';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
@@ -300,7 +299,6 @@ const Index = () => {
         )}
 
         {view === 'dashboard' && <Dashboard />}
-        {view === 'workflow' && <WorkflowPage />}
       </div>
     </div>
   );

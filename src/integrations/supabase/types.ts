@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      dashboard_settings: {
+        Row: {
+          balance: string | null
+          created_at: string
+          daily_goal: string | null
+          daily_quote: string | null
+          id: string
+          last_updated: string | null
+          quick_links: Json | null
+          search_engine: Json | null
+          theme: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: string | null
+          created_at?: string
+          daily_goal?: string | null
+          daily_quote?: string | null
+          id?: string
+          last_updated?: string | null
+          quick_links?: Json | null
+          search_engine?: Json | null
+          theme?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: string | null
+          created_at?: string
+          daily_goal?: string | null
+          daily_quote?: string | null
+          id?: string
+          last_updated?: string | null
+          quick_links?: Json | null
+          search_engine?: Json | null
+          theme?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pages: {
         Row: {
           content: string | null

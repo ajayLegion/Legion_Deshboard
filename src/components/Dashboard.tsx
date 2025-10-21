@@ -7,30 +7,18 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    const saved = localStorage.getItem('theme');
-    if (saved) return saved as 'light' | 'dark';
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  });
+  const [userId, setUserId] = useState<string | null>(null);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [greeting, setGreeting] = useState("");
   const [date, setDate] = useState("");
-  const [goal, setGoal] = useState(localStorage.getItem("dailyGoal") || "");
-  const [quote, setQuote] = useState(localStorage.getItem("dailyQuote") || "");
-  const [balance, setBalance] = useState(localStorage.getItem("balance") || "₹0.00");
-  const [lastUpdated, setLastUpdated] = useState(localStorage.getItem("lastUpdated") || "");
-
-  const [links, setLinks] = useState(
-    JSON.parse(localStorage.getItem("quickLinks") || "[]")
-  );
-
-  const [engine, setEngine] = useState(() => {
-    const saved = localStorage.getItem("searchEngine");
-    return saved
-      ? JSON.parse(saved)
-      : {
-          url: "https://www.google.com/search?q=",
-          icon: "https://www.google.com/favicon.ico",
-        };
+  const [goal, setGoal] = useState("");
+  const [quote, setQuote] = useState("");
+  const [balance, setBalance] = useState("₹0.00");
+  const [lastUpdated, setLastUpdated] = useState("");
+  const [links, setLinks] = useState<Array<{href: string, title: string, icon: string}>>([]);
+  const [engine, setEngine] = useState({
+    url: "https://www.google.com/search?q=",
+    icon: "https://www.google.com/favicon.ico",
   });
   const [query, setQuery] = useState("");
 
@@ -40,13 +28,41 @@ const Dashboard: React.FC = () => {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  // Check authentication
+  // Check authentication and load dashboard settings
   useEffect(() => {
+    const loadDashboardSettings = async (uid: string) => {
+      const { data, error } = await supabase
+        .from('dashboard_settings')
+        .select('*')
+        .eq('user_id', uid)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error loading dashboard settings:', error);
+        return;
+      }
+
+      if (data) {
+        setTheme(data.theme as 'light' | 'dark');
+        setGoal(data.daily_goal || "");
+        setQuote(data.daily_quote || "");
+        setBalance(data.balance || "₹0.00");
+        setLastUpdated(data.last_updated || "");
+        setLinks((data.quick_links as Array<{href: string, title: string, icon: string}>) || []);
+        setEngine((data.search_engine as {url: string, icon: string}) || {
+          url: "https://www.google.com/search?q=",
+          icon: "https://www.google.com/favicon.ico",
+        });
+      }
+    };
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) {
         navigate('/login');
       } else {
+        setUserId(session.user.id);
         setIsAuthenticated(true);
+        loadDashboardSettings(session.user.id);
         setLoading(false);
       }
     });
@@ -55,7 +71,9 @@ const Dashboard: React.FC = () => {
       if (!session) {
         navigate('/login');
       } else {
+        setUserId(session.user.id);
         setIsAuthenticated(true);
+        loadDashboardSettings(session.user.id);
         setLoading(false);
       }
     });
@@ -87,14 +105,29 @@ const Dashboard: React.FC = () => {
 
 
 
-  // LocalStorage sync
-  useEffect(() => localStorage.setItem("dailyGoal", goal), [goal]);
-  useEffect(() => localStorage.setItem("dailyQuote", quote), [quote]);
+  // Database sync - save settings to database when they change
   useEffect(() => {
-    localStorage.setItem("balance", balance);
-    localStorage.setItem("lastUpdated", lastUpdated);
-  }, [balance, lastUpdated]);
-  useEffect(() => localStorage.setItem("quickLinks", JSON.stringify(links)), [links]);
+    if (!userId || !isAuthenticated) return;
+    
+    const saveSettings = async () => {
+      await supabase
+        .from('dashboard_settings')
+        .upsert({
+          user_id: userId,
+          daily_goal: goal,
+          daily_quote: quote,
+          balance: balance,
+          last_updated: lastUpdated,
+          quick_links: links,
+          search_engine: engine,
+          theme: theme,
+        });
+    };
+
+    // Debounce save to avoid too many writes
+    const timeoutId = setTimeout(saveSettings, 500);
+    return () => clearTimeout(timeoutId);
+  }, [userId, isAuthenticated, goal, quote, balance, lastUpdated, links, engine, theme]);
   
 
   const doSearch = () => {
@@ -158,7 +191,6 @@ const Dashboard: React.FC = () => {
                 };
                 if (choice && map[choice]) {
                   setEngine(map[choice]);
-                  localStorage.setItem("searchEngine", JSON.stringify(map[choice]));
                 }
               }}
               className="bg-gray-200 dark:bg-gray-700 px-3 py-2 rounded-md flex items-center gap-2 hover:bg-gray-300 dark:hover:bg-gray-600"

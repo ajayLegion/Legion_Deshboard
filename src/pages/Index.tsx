@@ -230,19 +230,14 @@ const Index = () => {
        
           <Button variant="ghost" className="w-full justify-start">
            <img src="/avatar.png" alt="avatar" className=' w-8'/>
-            <span className="truncate text-sm font-medium">Legion Notes</span>
+            <span className="truncate text-sm font-medium">Legion Dashboard </span>
           </Button>
         
 
       {/* ✅ Top View Navigation */}
       
         
-        <button
-          className={`mx-2 px-4 py-2 rounded text-sm font-medium ${view === 'dashboard' ? 'bg-muted text-primary' : 'hover:bg-accent'}`}
-          onClick={() => setView('dashboard')}
-        >
-          Dashboard
-        </button>
+       
         {/* Theme Toggle */}
       <Button
             variant="ghost"

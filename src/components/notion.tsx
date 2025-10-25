@@ -9,7 +9,7 @@ const NotionPage = () => {
   useEffect(() => {
     const fetchPage = async () => {
       const response = await notion.pages.retrieve({
-        page_id: "your-page-id-here",
+        page_id: "292e5e217fa080b7b29ad28f750d4aef",
       });
       setPageData(response);
     };

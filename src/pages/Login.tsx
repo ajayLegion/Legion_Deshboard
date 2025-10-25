@@ -177,38 +177,38 @@ const Login = () => {
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-white">Email</Label>
+              <Label htmlFor="email" className="text-white">UserName</Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="Enter your email"
+                placeholder="Enter your username"
                 className="mt-1 bg-card/80 border-border/50 text-white placeholder-muted-foreground"
                 disabled={loading}
                 aria-invalid={!isValidEmail(email) && email.length > 0}
               />
               {!isValidEmail(email) && email.length > 0 && (
-                <p className="text-xs text-destructive">Invalid email format.</p>
+                <p className="text-xs text-destructive">Invalid username format.</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-white">Password</Label>
+              <Label htmlFor="password" className="text-white">Secret</Label>
               <Input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="Enter your password"
+                placeholder="Secret"
                 className="mt-1 bg-card/80 border-border/50 text-white placeholder-muted-foreground"
                 disabled={loading}
                 aria-invalid={password.length < 6 && password.length > 0}
               />
               {password.length < 6 && password.length > 0 && (
-                <p className="text-xs text-destructive">Password must be at least 6 characters.</p>
+                <p className="text-xs text-destructive">Secret must be at least 6 characters.</p>
               )}
             </div>
           </div>

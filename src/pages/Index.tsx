@@ -1,12 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { storage, Page } from '@/services/storage';
-import { PageSidebar } from '@/components/PageSidebar';
-import { PageEditor } from '@/components/PageEditor';
-import { exportToMarkdown, downloadMarkdown, parseMarkdownImport } from '@/utils/markdown';
 import { useToast } from '@/hooks/use-toast';
-import { FileText, Moon, Sun } from 'lucide-react';
+
 
 // ✅ New views
 import Dashboard from '@/components/Dashboard';
@@ -14,8 +10,7 @@ import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const navigate = useNavigate();
-  const [pages, setPages] = useState<Page[]>([]);
-  const [currentPage, setCurrentPage] = useState<Page | null>(null);
+  
   const [isDark, setIsDark] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -47,29 +42,7 @@ const Index = () => {
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    const initStorage = async () => {
-      const loadedPages = await storage.getAllPages();
-
-      if (loadedPages.length === 0) {
-        const welcomePage: Page = {
-          id: crypto.randomUUID(),
-          title: 'Welcome to Legion Notes',
-          content: '<p>Start writing your notes here!</p>',
-          parentId: null,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-          order: 0,
-        };
-        await storage.savePage(welcomePage);
-        setPages([welcomePage]);
-        setCurrentPage(welcomePage);
-      } else {
-        setPages(loadedPages);
-        setCurrentPage(loadedPages[0]);
-      }
-    };
-
-    initStorage();
+    
 
     const savedTheme = localStorage.getItem('theme');
     const isDarkMode = savedTheme === 'dark' || savedTheme === null;
@@ -80,32 +53,7 @@ const Index = () => {
     }
   }, [isAuthenticated]);
 
-  const handleCreatePage = async (parentId: string | null) => {
-    const newPage: Page = {
-      id: crypto.randomUUID(),
-      title: 'Untitled',
-      content: '',
-      parentId,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-      order: pages.filter(p => p.parentId === parentId).length,
-    };
-
-    await storage.savePage(newPage);
-    const updatedPages = await storage.getAllPages();
-    setPages(updatedPages);
-    setCurrentPage(newPage);
-
-    toast({
-      title: 'Page created',
-      description: 'New page has been created successfully.',
-    });
-  };
-
   
-
-  
-
  
 
   const handleToggleTheme = () => {
@@ -161,7 +109,7 @@ const Index = () => {
 
       {/* ✅ Main Content View */}
       <div className="flex-1 overflow-hidden">
-        {view === 'notes' && (
+        {view === 'dashboard' && (
           <div className="flex h-full">
            
           </div>

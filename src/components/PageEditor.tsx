@@ -18,13 +18,18 @@ const AddIconModal: React.FC<{
   onSelectIcon: (icon: string) => void;
 }> = ({ isOpen, onClose, onSelectIcon }) => {
   const [search, setSearch] = useState('');
-  const commonEmojis = [
-    '','😀', '😂', '🤔', '👍', '❤️', '🔥', '📝', '💡', '🚀', '🌟',
-    '📱', '💻', '📚', '🎯', '⚡', '🛡️', '🎨', '🔒', '📊', '🗓️',
-  ].filter(emoji => !search || emoji.includes(search));
+  // inclusive range for emoji set
+  const emojiList = Array.from(
+    { length: 0x1f64f - 0x1f600 + 1 },
+    (_, i) => String.fromCodePoint(0x1f600 + i)
+  );
 
   if (!isOpen) return null;
-  
+
+  const filtered = search
+    ? emojiList.filter((e) => e.includes(search))
+    : emojiList.slice(0, 60); // show a subset when no search
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-background p-6 rounded-lg max-w-sm w-full mx-4">
@@ -44,7 +49,7 @@ const AddIconModal: React.FC<{
           className="mb-4"
         />
         <div className="grid grid-cols-6 gap-2 max-h-64 overflow-y-auto mb-4">
-          {commonEmojis.map((emoji, i) => (
+          {filtered.map((emoji, i) => (
             <Button
               key={i}
               variant="ghost"
@@ -326,106 +331,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
     return false;
   };
 
-  const triggerAI = async () => {
-    if (aiLoading) return;
-    setAiLoading(true);
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) {
-      setAiLoading(false);
-      return;
-    }
-    const range = selection.getRangeAt(0);
-    const textNode = range.startContainer as Text;
-    const textBefore = textNode.textContent?.slice(0, range.startOffset).trim() || '';
-    if (textBefore.length < 5) {
-      setAiLoading(false);
-      return;
-    }
-
-    try {
-      // For xAI Grok API integration, get your API key from https://x.ai/api
-      const apiKey = process.env.REACT_APP_XAI_API_KEY || 'your-xai-api-key-here';
-      if (apiKey === 'your-xai-api-key-here') {
-        console.warn('xAI API key not set. Using mock completion.');
-        // Mock completion for testing
-        const mockCompletion = ' This is a mock AI completion to continue your thought.';
-        insertSuggestion(mockCompletion);
-        return;
-      }
-      const response = await fetch('https://api.x.ai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'grok-beta',
-          messages: [{ role: 'user', content: `Complete the following text naturally: ${textBefore}` }],
-          max_tokens: 100,
-          temperature: 0.7,
-          stream: false,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('API request failed');
-      }
-
-      const data = await response.json();
-      const completion = data.choices[0].message.content.trim();
-
-      if (completion) {
-        insertSuggestion(completion);
-      }
-    } catch (err) {
-      console.error('AI completion error:', err);
-      // Fallback: insert a placeholder
-      document.execCommand('insertText', false, ' [AI suggestion unavailable]');
-    } finally {
-      setAiLoading(false);
-    }
-  };
-
-  const insertSuggestion = (completion: string) => {
-    const suggestSpan = document.createElement('span');
-    suggestSpan.className = 'suggestion-text text-gray-400 italic inline';
-    suggestSpan.textContent = completion;
-    suggestSpan.contentEditable = 'false';
-    const selection = window.getSelection();
-    if (selection && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      range.insertNode(suggestSpan);
-      setSuggestion(completion);
-      setShowSuggestion(true);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    }
-  };
-
-  const acceptSuggestion = () => {
-    const span = editorRef.current?.querySelector('.suggestion-text');
-    if (span) {
-      span.classList.remove('suggestion-text', 'text-gray-400', 'italic');
-      (span as HTMLElement).contentEditable = 'true';
-      // Make it selectable
-      const range = document.createRange();
-      range.selectNodeContents(span);
-      const sel = window.getSelection();
-      sel?.removeAllRanges();
-      sel?.addRange(range);
-    }
-    setShowSuggestion(false);
-    handleContentChange();
-  };
-
-  const rejectSuggestion = () => {
-    const span = editorRef.current?.querySelector('.suggestion-text');
-    if (span) {
-      span.remove();
-    }
-    setShowSuggestion(false);
-    handleContentChange();
-  };
+  
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     // Markdown keyboard shortcuts
@@ -487,31 +393,10 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
         }
       }
       
-      if (!showSuggestion && !aiLoading) {
-        setTimeout(triggerAI, 100);
-      }
+      
       return;
     }
 
-    if (showSuggestion) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        acceptSuggestion();
-        return;
-      }
-      if (e.key === 'Escape') {
-        rejectSuggestion();
-        return;
-      }
-      // Allow backspace to delete suggestion
-      if (e.key === 'Backspace') {
-        const span = editorRef.current?.querySelector('.suggestion-text');
-        if (span && window.getSelection()?.focusOffset <= 0) {
-          rejectSuggestion();
-          return;
-        }
-      }
-    }
   };
 
     // Hide all menus
@@ -681,7 +566,7 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
           onKeyDown={handleKeyDown}
           onContextMenu={handleContextMenu}
          className="editor-content min-h-[500px] outline-none text-base leading-relaxed relative"
-          data-placeholder="Type '/' for commands, or use markdown: **bold**, *italic*, `code`, ~~strikethrough~~"
+          data-placeholder=""
           suppressContentEditableWarning
         >
                 {/* Toolbar on right-click */}
@@ -709,14 +594,9 @@ export const PageEditor = ({ page, onUpdate }: PageEditorProps) => {
 
         {/* Formatting Toolbar */}
       
-       <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide"></div> <Button variant="ghost" size="sm" className="h-9 justify-start w-full" onClick={() => { triggerAI(); setShowSlashMenu(false); }} disabled={aiLoading} >AI</Button>
-  
-        {/* AI Suggestion Instructions (if active) */}
-        {showSuggestion && (
-          <div className="fixed bottom-4 right-4 bg-muted p-2 rounded-lg text-sm text-muted-foreground z-40">
-            Press Enter to accept, Esc to reject
-          </div>
-        )}
+       <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide"></div> 
+      
+       
         {/* Modals */}
         <AddIconModal isOpen={showIconModal} onClose={() => setShowIconModal(false)} onSelectIcon={handleAddIcon} />
         <AddCoverModal isOpen={showCoverModal} onClose={() => setShowCoverModal(false)} onAddCover={handleAddCover} />

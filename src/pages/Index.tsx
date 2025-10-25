@@ -263,32 +263,7 @@ const Index = () => {
       <div className="flex-1 overflow-hidden">
         {view === 'notes' && (
           <div className="flex h-full">
-            <PageSidebar
-              pages={pages}
-              currentPageId={currentPage?.id || null}
-              onSelectPage={handleSelectPage}
-              onCreatePage={handleCreatePage}
-              onDeletePage={handleDeletePage}
-              onExport={handleExport}
-              onImport={handleImport}
-              isDark={isDark}
-              onToggleTheme={handleToggleTheme}
-            />
-            {currentPage ? (
-              <PageEditor
-                key={currentPage.id}
-                page={currentPage}
-                onUpdate={handleUpdatePage}
-              />
-            ) : (
-              <div className="flex-1 flex items-center justify-center text-muted-foreground">
-                <div className="text-center">
-                  <FileText className="h-16 w-16 mx-auto mb-4 opacity-20" />
-                  <p className="text-lg">No page selected</p>
-                  <p className="text-sm">Create a new page to get started</p>
-                </div>
-              </div>
-            )}
+           
           </div>
         )}
 

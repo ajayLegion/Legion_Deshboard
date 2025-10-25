@@ -19,7 +19,7 @@ const Index = () => {
   const [isDark, setIsDark] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<'notes' | 'dashboard' | 'workflow'>('notes'); // ✅ View state
+  const [view, setView] = useState<'dashboard'>('dashboard'); // ✅ View state
   const { toast } = useToast();
 
   useEffect(() => {
@@ -102,101 +102,11 @@ const Index = () => {
     });
   };
 
-  const handleUpdatePage = async (updatedPage: Page) => {
-    await storage.savePage(updatedPage);
-    const updatedPages = await storage.getAllPages();
-    setPages(updatedPages);
-    setCurrentPage(updatedPage);
-  };
+  
 
-  const handleDeletePage = async (id: string) => {
-    const deletePageAndChildren = async (pageId: string) => {
-      const children = pages.filter(p => p.parentId === pageId);
-      for (const child of children) {
-        await deletePageAndChildren(child.id);
-      }
-      await storage.deletePage(pageId);
-    };
+  
 
-    await deletePageAndChildren(id);
-    const updatedPages = await storage.getAllPages();
-    setPages(updatedPages);
-
-    if (currentPage?.id === id) {
-      setCurrentPage(updatedPages[0] || null);
-    }
-
-    toast({
-      title: 'Page deleted',
-      description: 'Page and its children have been deleted.',
-    });
-  };
-
-  const handleSelectPage = (id: string) => {
-    const page = pages.find(p => p.id === id);
-    if (page) {
-      setCurrentPage(page);
-    }
-  };
-
-  const handleExport = () => {
-    const markdown = exportToMarkdown(pages);
-    downloadMarkdown(markdown);
-
-    toast({
-      title: 'Export successful',
-      description: 'Your notes have been exported to markdown.',
-    });
-  };
-
-  const handleImport = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.md,.txt';
-
-    input.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-
-      const content = await file.text();
-      const importedPages = parseMarkdownImport(content);
-
-      const pageIdMap = new Map<number, string>();
-
-      for (let i = 0; i < importedPages.length; i++) {
-        const pageData = importedPages[i];
-        const newId = crypto.randomUUID();
-        pageIdMap.set(i, newId);
-
-        let parentId: string | null = null;
-        if ('__parentIndex' in pageData) {
-          const parentIndex = (pageData as any).__parentIndex;
-          parentId = pageIdMap.get(parentIndex) || null;
-        }
-
-        const newPage: Page = {
-          title: pageData.title,
-          content: pageData.content,
-          parentId,
-          id: newId,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-          order: pages.length + i,
-        };
-        await storage.savePage(newPage);
-      }
-
-      const updatedPages = await storage.getAllPages();
-      setPages(updatedPages);
-
-      toast({
-        title: 'Import successful',
-        description: `Imported ${importedPages.length} page(s) from markdown.`,
-      });
-    };
-
-    input.click();
-  };
+ 
 
   const handleToggleTheme = () => {
     const newIsDark = !isDark;

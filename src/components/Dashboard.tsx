@@ -30,7 +30,10 @@ const Dashboard: React.FC = () => {
         .eq("user_id", uid)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error loading dashboard settings:", error.message); // Enhanced error logging
+        throw error;
+      }
 
       if (data) {
         setTheme((data.theme as "light" | "dark") || "light");
@@ -64,16 +67,50 @@ const Dashboard: React.FC = () => {
   const saveDashboardSettings = async () => {
     if (!userId) return;
     try {
-      await supabase.from("dashboard_settings").upsert({
-        user_id: userId,
-        daily_goal: goal,
-        daily_quote: quote,
-        balance,
-        last_updated: lastUpdated,
-        quick_links: links,
-        search_engine: engine,
-        theme,
-      });
+      // Check if the record exists
+      const { data, error: fetchError } = await supabase
+        .from("dashboard_settings")
+        .select("*")
+        .eq("user_id", userId)
+        .single();
+
+      if (fetchError && fetchError.code !== 'PGRST116') { // Ignore not found error
+        console.error("Error fetching dashboard settings:", fetchError.message);
+        return;
+      }
+
+      if (data) {
+        // Update existing record
+        const { error } = await supabase.from("dashboard_settings").update({
+          daily_goal: goal,
+          daily_quote: quote,
+          balance,
+          last_updated: lastUpdated,
+          quick_links: links,
+          search_engine: engine,
+          theme,
+        }).eq("user_id", userId);
+
+        if (error) {
+          console.error("Error updating dashboard settings:", error.message);
+        }
+      } else {
+        // Insert new record
+        const { error } = await supabase.from("dashboard_settings").insert({
+          user_id: userId,
+          daily_goal: goal,
+          daily_quote: quote,
+          balance,
+          last_updated: lastUpdated,
+          quick_links: links,
+          search_engine: engine,
+          theme,
+        });
+
+        if (error) {
+          console.error("Error saving dashboard settings:", error.message);
+        }
+      }
     } catch (error) {
       console.error("Error saving dashboard settings:", error);
     }

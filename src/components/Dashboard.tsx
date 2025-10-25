@@ -7,7 +7,7 @@ const Dashboard: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
-  const [theme] = useState<"light" | "dark">("light");
+  const [theme] = useState<"light" | "dark">("dark");
   const [greeting, setGreeting] = useState("");
   const [date, setDate] = useState("");
   const [goal, setGoal] = useState("");
@@ -315,6 +315,12 @@ const Dashboard: React.FC = () => {
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Last updated: {lastUpdated}
             </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Balance history:
+            </p>
+           
+
+
           </div>
         </section>
 

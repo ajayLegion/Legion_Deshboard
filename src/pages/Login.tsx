@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -10,9 +10,68 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Email validation regex
+  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  // Matrix rain effect
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Katakana characters for Matrix effect
+    const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエォコソトノホモヨョロヲゴゾドボポヴッン';
+    const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const nums = '0123456789';
+    const chars = katakana + latin + nums;
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops: number[] = [];
+    for (let x = 0; x < columns; x++) drops[x] = 1;
+
+    const draw = () => {
+      // Semi-transparent black to fade previous frames
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#0F0"; // Green color
+      ctx.font = `${fontSize}px monospace`;
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        // Reset drop if it reaches bottom
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    };
+
+    const interval = setInterval(draw, 50); // Adjust speed here (lower = faster)
+
+    // Resize handler
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     // Check if user is already logged in
@@ -33,38 +92,49 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Basic validation
+    if (!email || !password) {
+      toast({
+        title: "Error",
+        description: "Please fill in all fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters long.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
-      if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`,
-          },
-        });
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        if (error) throw error;
+      if (error) throw error;
 
-        toast({
-          title: "Success",
-          description: "Account created! You can now sign in.",
-        });
-        setIsSignUp(false);
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (error) throw error;
-
-        toast({
-          title: "Success",
-          description: "Logged in successfully",
-        });
-      }
+      toast({
+        title: "Success",
+        description: "Logged in successfully! Redirecting...",
+      });
     } catch (error: any) {
       toast({
         title: "Error",
@@ -77,22 +147,37 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="w-full max-w-md space-y-8 p-8">
+    <div className="min-h-screen flex items-center justify-center bg-black relative overflow-hidden">
+      {/* Matrix Background Canvas */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{ background: "transparent" }}
+      />
+      
+      {/* Overlay to make text readable */}
+      <div className="absolute inset-0 bg-black/80 z-0" />
+
+      {/* Form Container */}
+      <div className="w-full max-w-md space-y-8 p-8 relative z-10">
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-primary/10">
-            
-          </div>
-          <h2 className="mt-6 text-3xl font-bold">
-            <img src="/avatar.png" alt="avatar" />
-            {isSignUp ? "Create Account" : "Welcome Legion"}
+          <img 
+            src="/avatar.png" 
+            alt="Legion Avatar" 
+            className="mx-auto h-12 w-12 rounded-full bg-primary/10 p-2" 
+          />
+          <h2 className="mt-6 text-3xl font-bold text-white">
+            Welcome Legion
           </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Enter the code
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="email">Email</Label>
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-white">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -100,12 +185,17 @@ const Login = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="Enter your email"
-                className="mt-1"
+                className="mt-1 bg-card/80 border-border/50 text-white placeholder-muted-foreground"
+                disabled={loading}
+                aria-invalid={!isValidEmail(email) && email.length > 0}
               />
+              {!isValidEmail(email) && email.length > 0 && (
+                <p className="text-xs text-destructive">Invalid email format.</p>
+              )}
             </div>
 
-            <div>
-              <Label htmlFor="password">Password</Label>
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-white">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -113,28 +203,23 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="Enter your password"
-                className="mt-1"
+                className="mt-1 bg-card/80 border-border/50 text-white placeholder-muted-foreground"
+                disabled={loading}
+                aria-invalid={password.length < 6 && password.length > 0}
               />
+              {password.length < 6 && password.length > 0 && (
+                <p className="text-xs text-destructive">Password must be at least 6 characters.</p>
+              )}
             </div>
           </div>
 
           <Button
             type="submit"
-            className="w-full"
-            disabled={loading}
+            className="w-full bg-green-600 hover:bg-green-700 text-black font-bold"
+            disabled={loading || !isValidEmail(email) || password.length < 6}
           >
-            {loading ? (isSignUp ? "Creating account..." : "Signing in...") : (isSignUp ? "Create Account" : "Sign in")}
+            {loading ? "Signing in..." : "Sign in"}
           </Button>
-
-          <div className="text-center">
-            <button
-              type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm text-primary hover:underline"
-            >
-              {isSignUp ? "Already have an account? Sign in" : "Need to create an account? Sign up"}
-            </button>
-          </div>
         </form>
       </div>
     </div>

@@ -236,12 +236,7 @@ const Index = () => {
 
       {/* ✅ Top View Navigation */}
       
-        <button
-          className={`mx-2 px-4 py-2 rounded text-sm font-medium ${view === 'notes' ? 'bg-muted text-primary' : 'hover:bg-accent'}`}
-          onClick={() => setView('notes')}
-        >
-          Notes
-        </button>
+        
         <button
           className={`mx-2 px-4 py-2 rounded text-sm font-medium ${view === 'dashboard' ? 'bg-muted text-primary' : 'hover:bg-accent'}`}
           onClick={() => setView('dashboard')}

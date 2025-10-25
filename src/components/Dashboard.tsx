@@ -328,7 +328,7 @@ const Dashboard: React.FC = () => {
           </div>
         </section>
 
-        {/* ✅ Right Section (Profile / Branding) */}
+        {/* ✅ Right Section (Profile / Branding) 
         <section className="flex-1 flex flex-col items-center justify-center relative py-20 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-100 via-white to-transparent dark:from-gray-800 dark:via-gray-900 dark:to-gray-950 opacity-40 blur-2xl" />
           
@@ -344,7 +344,7 @@ const Dashboard: React.FC = () => {
               Ajay Legion
             </h1>
               </div>
-        </section>
+        </section>*/}
       </main>
     </div>
   );

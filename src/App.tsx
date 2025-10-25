@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
 import Login from "./pages/Login";
+import NotionPage from "./pages/notion";
 
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
         
           <Route path="/" element={<Index />} />
+         
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

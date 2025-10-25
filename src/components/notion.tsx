@@ -1,27 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Client } from "@notionhq/client";
+import { FC } from 'react';
 
-const notion = new Client({ auth: process.env.NOTION_API_KEY });
-
-const NotionPage = () => {
-  const [pageData, setPageData] = useState<any>(null);
-
-  useEffect(() => {
-    const fetchPage = async () => {
-      const response = await notion.pages.retrieve({
-        page_id: "292e5e217fa080b7b29ad28f750d4aef",
-      });
-      setPageData(response);
-    };
-    fetchPage();
-  }, []);
-
-  if (!pageData) return <div>Loading...</div>;
-
+const NotionPage: FC = () => {
   return (
-    <div>
-      <h1>{pageData.properties.title.title[0].plain_text}</h1>
-      <pre>{JSON.stringify(pageData, null, 2)}</pre>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Notion Integration</h1>
+      <div className="bg-card p-4 rounded-lg">
+        {/* Add your Notion content here */}
+        <p>Your Notion content will appear here</p>
+      </div>
     </div>
   );
 };

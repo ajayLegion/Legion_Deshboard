@@ -4,13 +4,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Dashboard from '@/components/Dashboard';
+import NotionPage from '@/components/notion';
 
 const Index = () => {
   const navigate = useNavigate();
-   const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<'dashboard'>('dashboard'); // Only dashboard view
+  const [view, setView] = useState<'dashboard' | 'notion'>('dashboard'); // Default to dashboard view
 
   // ✅ Authentication check
   useEffect(() => {
@@ -34,8 +35,6 @@ const Index = () => {
   // ✅ Load pages + theme once authenticated
   useEffect(() => {
     if (!isAuthenticated) return;
-
-    
 
     // ✅ Initialize Theme
     const saved = localStorage.getItem('theme');
@@ -80,6 +79,14 @@ const Index = () => {
           >
             Dashboard
           </button>
+        <button
+          onClick={() => setView('notion')}
+          className={`px-4 py-2 rounded text-sm font-medium ${
+            view === 'notion' ? 'bg-muted text-primary' : 'hover:bg-accent'
+          }`}
+        >
+            Notion
+          </button>
 
           <Button variant="ghost" onClick={handleToggleTheme} className="px-4 py-2 text-sm">
             {isDark ? <Sun className="h-4 w-4 mr-2" /> : <Moon className="h-4 w-4 mr-2" />}
@@ -91,6 +98,7 @@ const Index = () => {
       {/* ✅ Main Content */}
       <div className="flex-1 overflow-hidden">
         {view === 'dashboard' && <Dashboard />}
+        {view === 'notion' && <NotionPage />}
       </div>
     </div>
   );

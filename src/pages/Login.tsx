@@ -164,7 +164,7 @@ const Login = () => {
           <img 
             src="/avatar.png" 
             alt="Legion Avatar" 
-            className="mx-auto h-12 w-12 rounded-full bg-primary/10 p-2" 
+            className="mx-auto h-12 w-12 rounded-full bg-white p-2" 
           />
           <h2 className="mt-6 text-3xl font-bold text-white">
             Welcome Legion

@@ -10,7 +10,7 @@ const Index = () => {
   const [isDark, setIsDark] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<'dashboard' | 'notion'>('dashboard'); // Default to dashboard view
+  const [view, setView] = useState<'dashboard'>('dashboard'); // Default to dashboard view
 
   // ✅ Authentication check
   useEffect(() => {

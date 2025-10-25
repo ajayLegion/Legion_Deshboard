@@ -7,7 +7,7 @@ const Dashboard: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme] = useState<"light" | "dark">("light");
   const [greeting, setGreeting] = useState("");
   const [date, setDate] = useState("");
   const [goal, setGoal] = useState("");
@@ -36,23 +36,15 @@ const Dashboard: React.FC = () => {
       }
 
       if (data) {
-        setTheme((data.theme as "light" | "dark") || "light");
         setGoal(data.daily_goal || "");
         setQuote(data.daily_quote || "");
         setBalance(data.balance || "₹0.00");
         setLastUpdated(data.last_updated || "");
-        setLinks(data.quick_links || []);
-        setEngine(
-          data.search_engine || {
-            url: "https://www.google.com/search?q=",
-            icon: "https://www.google.com/favicon.ico",
-          }
-        );
+        
       } else {
         // default settings
         await supabase.from("dashboard_settings").insert({
           user_id: uid,
-          theme: "light",
           balance: "₹0.00",
           quick_links: [],
           search_engine: { url: "https://www.google.com/search?q=", icon: "https://www.google.com/favicon.ico" },
@@ -88,7 +80,6 @@ const Dashboard: React.FC = () => {
           last_updated: lastUpdated,
           quick_links: links,
           search_engine: engine,
-          theme,
         }).eq("user_id", userId);
 
         if (error) {
@@ -104,7 +95,6 @@ const Dashboard: React.FC = () => {
           last_updated: lastUpdated,
           quick_links: links,
           search_engine: engine,
-          theme,
         });
 
         if (error) {
@@ -174,7 +164,7 @@ const Dashboard: React.FC = () => {
       const timeoutId = setTimeout(() => saveDashboardSettings(), 1000);
       return () => clearTimeout(timeoutId);
     }
-  }, [goal, quote, balance, lastUpdated, links, engine, theme, isAuthenticated, userId]);
+  }, [goal, quote, balance, lastUpdated, links, engine, isAuthenticated, userId]);
 
   const doSearch = () => {
     if (!query.trim()) return;
